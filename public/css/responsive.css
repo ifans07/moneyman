@@ -1,0 +1,232 @@
+/* header */
+@media (max-width: 768px) {
+  .toggle {
+    display: block;
+  }
+  .logo-list {
+    display: flex;
+    margin-left: 2rem;
+    margin-top: 0.8rem;
+  }
+
+  #header .logo {
+    /* background-color: red; */
+    margin-top: 0.4rem;
+    width: 50% !important;
+  }
+  .nav-list {
+    position: fixed;
+    height: 100%;
+    width: 70%;
+    left: -80%;
+    top: 0;
+    background-color: var(--bs-tersier);
+    /* background-color: rgba(255, 255, 255, 0.99); */
+    overflow: hidden;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    transition: 0.3s;
+    display: flex;
+    flex-direction: column;
+    justify-content: unset;
+    align-items: unset;
+    /* align-items: start; */
+    padding: 10px 0 20px 0;
+  }
+  /* .nav-list .h2{
+      width: 500px !important;
+      padding: 8px 12px;
+    } */
+  .nav-list.active {
+    left: 0;
+  }
+  .nav-list ul {
+    display: flex;
+    align-items: start;
+    flex-direction: column;
+    gap: 20px;
+    /* margin-top: 40px; */
+  }
+  .nav-list .daftar {
+    margin-top: auto;
+    justify-self: end;
+  }
+
+  .btn-login {
+    width: 100%;
+    display: flex;
+    justify-content: start !important;
+    align-items: unset;
+    padding: 8px 12px;
+    margin-left: 1rem;
+  }
+
+  .icon-width {
+    width: 20% !important;
+    box-shadow: none !important;
+    background-color: #d7e1eb !important;
+  }
+}
+
+/* hero */
+@media (max-width: 768px) {
+  #hero {
+    height: 25vh;
+  }
+  .hero::after {
+    height: 29%;
+  }
+}
+
+/* Responsif untuk berbagai ukuran layar */
+
+/* Layar besar (desktop) */
+@media (min-width: 992px) {
+  .col-lg-6 {
+    width: 50%;
+  }
+}
+
+/* Layar menengah (tablet) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .col-md-6 {
+    width: 50%;
+  }
+  .container {
+    max-width: 1140px;
+    width: 100%;
+  }
+  #hero {
+    height: 25vh;
+  }
+  .hero::after {
+    height: 29%;
+  }
+
+  footer {
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+  }
+}
+
+/* Layar kecil (ponsel) */
+@media (max-width: 767.98px) {
+  .col-sm-12 {
+    width: 100%;
+  }
+
+  /* Memastikan tombol dan teks tidak terlalu rapat di ponsel */
+  .btn {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+
+  /* Mengatur ulang jarak dan ukuran teks di ponsel */
+  .table th,
+  .table td {
+    padding: 0.5rem;
+  }
+
+  /* Mengatur ulang modal agar lebih cocok di ponsel */
+  .modal-dialog {
+    margin: 0;
+    max-width: 100%;
+    height: 100%;
+  }
+
+  .modal-content {
+    height: 100%;
+  }
+
+  .modal-header,
+  .modal-footer {
+    padding: 10px;
+  }
+  .modal-header {
+    background-color: var(--bs-primary);
+  }
+  /* .modal-footer{
+        position: fixed;
+        bottom: 5rem;
+        width: 100%;
+    } */
+
+  .modal-body {
+    overflow-y: auto;
+  }
+
+  .month-carousel-wrapper {
+    overflow: hidden;
+  }
+  .btn-grafik {
+    display: flex;
+    justify-content: center;
+  }
+
+  #login-wrap {
+    width: 100% !important;
+  }
+}
+
+/* Tabel di ponsel */
+@media (max-width: 575.98px) {
+  .table-responsive {
+    border: 0;
+  }
+
+  .table thead {
+    display: none;
+  }
+
+  .table tbody td {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem;
+    border-top: none;
+  }
+
+  .table tbody td:before {
+    content: attr(data-label);
+    font-weight: bold;
+    flex: 1;
+  }
+  .tengah {
+    text-align: center;
+  }
+
+  #login-wrap {
+    width: 100% !important;
+    /* border-top-left-radius: none !important; */
+    /* border-bottom-left-radius: none !important; */
+    /* overflow: hidden; */
+  }
+  .tmb-trx {
+    position: fixed;
+    background-color: #bad6ca !important;
+    bottom: 20px;
+    right: 20px;
+    z-index: 100;
+    border-radius: 50% !important;
+  }
+  .tmb-trx a i {
+    font-size: 32px !important;
+    color: #384c57 !important;
+  }
+  .tmb-trx a p {
+    display: none;
+  }
+}
+
+/* @media (min-width: 1200px) {
+  #expensesChart {
+      max-width: 900px;
+      max-height: 600px;
+  }
+} */
+
+/* @media (max-width: 768px) {
+  #expensesChart {
+      max-width: 400px;
+      max-height: 200px;
+  }
+} */
