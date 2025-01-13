@@ -110,6 +110,22 @@
 
     <section style="margin-top: 2rem; margin-bottom: 2rem;">
         <div class="container">
+
+            <!-- Custom Period Input -->
+            <div class="row mb-5 g-2" id="customPeriod">
+                <div class="col-md-5">
+                    <label for="startDate" class="form-label">Start Date:</label>
+                    <input type="date" id="startDate" class="form-control" value="<?= date('Y-m-01') ?>">
+                </div>
+                <div class="col-md-5">
+                    <label for="endDate" class="form-label">End Date:</label>
+                    <input type="date" id="endDate" class="form-control" value="<?= date('Y-m-t') ?>">
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button class="btn btn-primary w-100 fw-medium" onclick="fetchIncome()" disabled><i class="fa-solid fa-filter"></i> Filter</button>
+                </div>
+            </div>
+
             <div class="row">
                 <div class="col-md-6 mb-5">
                     <div style="margin-bottom: 1.4rem;">
@@ -119,7 +135,7 @@
                         <div class="mb-3">
                             <?php if(count($expenseIncome) != 0): ?>
                             <?php foreach($expenseIncome as $ei): ?>
-                                <div class="d-flex align-items-center justify-content-between p-2 rounded-3 mb-2 position-relative overflow-hidden wrp-hapus" style="background-color: #f7f9fa; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.07); transition: transform 0.2s;">
+                                <div class="d-flex align-items-center justify-content-between p-3 rounded-3 mb-2 position-relative overflow-hidden wrp-hapus" style="background-color: #f7f9fa; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.07); transition: transform 0.2s;">
                                     <div class="grp-hapus">
                                         <button class="btn" onclick="hapusTransaksi('<?= $ei['slug'] ?>','<?= $ei['status'] ?>')" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Hapus"><i class="fa-solid fa-trash fs-2 text-danger"></i></button>
                                         <button class="btn disabled" style="border: none;" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="coming soon">
@@ -128,7 +144,7 @@
                                     </div>
                                     <div class="d-flex align-items-center gap-3">
                                         <div class="d-flex align-items-center justify-content-center rounded-3" style="width: 3rem; height: 3rem; background-color: #384c57; color: #fafafa;">
-                                            <i class="fa-solid <?= $ei['icon'] ?>"></i>
+                                            <i class="fa-solid <?= $ei['icon'] ?> text-warning"></i>
                                         </div>
                                         <div class="lh-1">
                                             <h5 style="font-size: 18px" class="mb-1 p-0"><?= $ei['name'] ?></h5>
@@ -455,8 +471,25 @@
                     data: incomeDataC.map(d => d.total),
                     // backgroundColor: ['#006ba6', '#0496ff', '#ffbc42', '#d81159','#8f2d56'],
                     // borderColor: ['#006ba6', '#0496ff', '#ffbc42', '#d81159','#8f2d56']
-                    backgroundColor: ['#ffbc42', '#a2d2ff', '#ffc8dd', '#bde0fe','#ffafcc'],
-                    borderColor: ['#ffbc42', '#a2d2ff', '#ffc8dd', '#bde0fe','#ffafcc']
+                    backgroundColor: [
+                        "rgba(255, 188, 66, .7)",
+                        "rgba(162, 210, 255, .7)", 
+                        "rgba(255, 200, 221, .7)", 
+                        "rgba(189, 224, 254, .7)",
+                        "rgba(255, 175, 204, .7)",
+                        // '#ffbc42',
+                        // '#a2d2ff',
+                        // '#ffc8dd', 
+                        // '#bde0fe',
+                        // '#ffafcc'
+                    ],
+                    borderColor: [
+                        '#ffbc42', 
+                        '#a2d2ff', 
+                        '#ffc8dd', 
+                        '#bde0fe',
+                        '#ffafcc'
+                    ]
                 }]
             },
             options: {
@@ -504,24 +537,34 @@
                     data: expenseData.map(d => d.total),
                     // backgroundColor: ['#f44336', '#e57373', '#ff5722'],
                     // borderColor: ['#f44336', '#e57373', '#ff5722']
-                    backgroundColor: ['#74b3ce', '#09bc8a', '#508991','#004346','#172a3a'],
+                    // backgroundColor: ['#74b3ce', '#09bc8a', '#508991','#004346','#172a3a'],
                     backgroundColor: [
-                        "#4CAF50",
-                        "#F44336",
-                        "#2196F3",
+                        "rgba(9, 188, 138, 0.7)",
+                        "rgba(220, 53, 69, 0.7)",
+                        "rgba(33, 150, 243, 0.7)",
+                        "rgba(75, 192, 192, 0.7)",
+                        "rgba(255, 99, 132, 0.7)",
+                        // "rgba(76, 175, 80, 0.7)",
+                        // "rgba(244, 67, 54, 0.7)",
+                        // "#4CAF50",
+                        // "#F44336",
+                        // "#2196F3",
                         // "#198754",
                         // "#dc3545",
-                        "rgba(75, 192, 192, 1)",
-                        "rgba(255, 99, 132, 1)",
                     ],
                     borderColor: [
-                        "#4CAF50",
-                        "#F44336",
-                        "#2196F3",
+                        "rgba(9, 188, 138, 1)",
+                        "rgba(220, 53, 69, 1)",
+                        "rgba(33, 150, 243,1)",
+                        "rgba(75, 199, 132, 1)",
+                        "rgba(255, 99, 132, 1)",
+                        // "rgba(76, 175, 80, 1)",
+                        // "rgba(244, 67, 54, 1)",
+                        // "#4CAF50",
+                        // "#F44336",
+                        // "#2196F3",
                         // "#198754",
                         // "#dc3545",
-                        "rgba(75, 192, 192, 1)",
-                        "rgba(255, 99, 132, 1)",
                     ],
                     // borderColor: ['#74b3ce', '#09bc8a', '#508991','#004346','#172a3a']
                 }]

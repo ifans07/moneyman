@@ -24,7 +24,8 @@ class Income extends BaseController
     {
         $data = [
             'title' => 'Income',
-            'kategori_income' => $this->kategori_income->findAll(),
+            'deskripsi' => "Catat semua sumber pemasukan Anda untuk memantau keuangan dan menganalisis pertumbuhan tabungan.",
+            'kategori_income' => $this->kategori_income->orderBy("CASE WHEN kategori = 'Lain-lain' THEN 1 ELSE 0 END", 'ASC')->orderBy('kategori', 'ASC')->findAll(),
             'income' => $this->income->join('kategori_income', 'kategori_income.id=income.id_kategori_income')->where('date_income', date('Y-m'))->where('id_user',session()->get('id'))->findAll()
         ];
         return view('income/index', $data);

@@ -175,8 +175,8 @@
 
         .grp-hapus{
             position: absolute;
-            top: 0px;
-            right: -100%;
+            bottom: 0px;
+            right: -110%;
             /* right: 0; */
             /* background-color: rgba(255, 255, 255, 1); */
             /* background-color:rgb(215, 225, 235, 0.9); */
@@ -189,11 +189,11 @@
             justify-content: center;
             align-items: center;
             gap: .8rem;
-            transition: right .3s ease-in-out;
+            transition: right .3s;
         }
         .grp-hapus-trx{
             position: absolute;
-            top: -105%;
+            top: -110%;
             right: 0px;
             /* right: 0; */
             /* background-color: rgba(255, 255, 255, 1); */
@@ -210,12 +210,23 @@
             transition: top .3s ease-in-out;
         }
         .wrp-hapus:hover .grp-hapus{
-            right: 0px;
-            transition: right .4s ease-in-out;
+            right: 0;
+            transition: right .3s;
         }
         .wrp-hapus-trx:hover .grp-hapus-trx{
-            top: 0px;
+            top: 0;
             transition: top .4s ease-in-out;
+        }
+
+        .tutup{
+            position: absolute;
+            bottom:0;
+            left: 0;
+            background-color: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.07);
+            width: 100%;
+            height: 100%;
+            /* z-index: 99; */
         }
         
     </style>
@@ -233,8 +244,16 @@
                     <div class="d-flex align-items-center justify-content-center">
                         <div class="text-center text-secondary">
                             <h2 class="fw-bold">MoneyMan</h2>
-                            <h3>Codeigniter <?= CodeIgniter\CodeIgniter::CI_VERSION ?></h3>
-                            <p>Web pengelolaan pengeluaran dan pemasukan</p>
+                            <?php if(!empty($title)): ?>
+                                <h3><?= $title ?></h3>
+                            <?php else: ?>
+                                <h3>Codeigniter <?= CodeIgniter\CodeIgniter::CI_VERSION ?></h3>
+                            <?php endif; ?>
+                            <?php if(empty($deskripsi)): ?>
+                                <p>Web pengelolaan pengeluaran dan pemasukan</p>
+                            <?php else: ?>
+                                <p><?= $deskripsi ?></p>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>

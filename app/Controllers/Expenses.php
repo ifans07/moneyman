@@ -23,7 +23,8 @@ class Expenses extends BaseController
     {
         $data = [
             'title' => 'Expenses',
-            'kategori_expense' => $this->kategori_expense->findAll(),
+            'deskripsi' => "Kelola dan pantau semua pengeluaran Anda dengan mudah, lengkap dengan detail kategori dan periode.",
+            'kategori_expense' => $this->kategori_expense->orderBy("CASE WHEN kategori = 'Lain-lain' THEN 1 ELSE 0 END", 'ASC')->orderBy('kategori', 'ASC')->findAll(),
             'expenses' => $this->expenses->join('kategori_expenses', 'kategori_expenses.id=expenses.id_kategori_expenses')->where('date_expenses', date('Y-m'))->where('id_user', session()->get('id'))->findAll()
         ];
         return view('expense/index', $data);

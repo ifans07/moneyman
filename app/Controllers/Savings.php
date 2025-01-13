@@ -21,6 +21,7 @@ class Savings extends BaseController
     {
         $data = [
             'title' => "Savings Detail",
+            'deskripsi' => "Pantau progres tabungan secara rinci, termasuk histori transaksi, target, dan jumlah yang telah tercapai.",
             'savings' => $this->savings->where('id_user', session()->get('id'))->find($id)
         ];
         return view('savings/savings_detail', $data);

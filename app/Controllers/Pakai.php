@@ -20,7 +20,8 @@ class Pakai extends BaseController
     {
         $data = [
             'title' => 'Pakai',
-            'pakai' => $this->pakai->join('kategori_expenses', 'kategori_expenses.id=pakai.id_kategori')->findAll(),
+            'deskripsi' => "Lacak penggunaan barang atau layanan untuk memantau durasi pemakaian dan efisiensi penggunaannya.",
+            'pakai' => $this->pakai->select('pakai.id, id_user, id_kategori, kategori, icon, nama, tanggal_mulai, tanggal_selesai, pakai.catatan, status_pakai, pakai.slug, pakai.deleted_at')->join('kategori_expenses', 'kategori_expenses.id=pakai.id_kategori')->where('id_user', session()->get('id'))->orderBy('pakai.created_at', 'DESC')->findAll(),
             'kategori' => $this->kategori->findAll()
         ];
         return view('pakai/index', $data);
@@ -53,6 +54,16 @@ class Pakai extends BaseController
         return $this->response->setJSON([
             'success' => 'berhasil',
             'message' => 'gagal'
+        ]);
+    }
+
+    public function hapusPakai()
+    {
+        $slug = $this->request->getPost('slug');
+        $data = $this->pakai->where('slug', $slug)->first();
+        $this->pakai->delete($data['id']);
+        return $this->response->setJSON([
+            'data' => $data['deleted_at']
         ]);
     }
 }

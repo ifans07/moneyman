@@ -259,6 +259,21 @@ $(document).ready(function () {
                 $('#categoryModal').modal('hide');
                 loadCategories();
                 showToast(id ? 'Kategori di '+ $('#categoryType').val() +' berhasil diperbarui!' : 'Kategori '+ $('#categoryType').val() +' berhasil ditambahkan!', 'success');
+                const Toast = Swal.mixin({
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                }
+                });
+                Toast.fire({
+                    icon: "success",
+                    title: (id ? "Updated in successfully" : "Add data in successfully")
+                });
             },
             error: function () {
                 showToast('Gagal menyimpan kategori.', 'danger');

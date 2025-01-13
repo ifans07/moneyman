@@ -66,32 +66,37 @@ class Auth extends BaseController
         $password = $this->request->getVar('password');
         $data = $this->userModel->where('username', $username)->orWhere('email', $username)->first();
         
-        if($data['username'] === $username){
-            $pass = $data['password'];
-            $authenticatePassword = password_verify($password, $pass);
-            if($authenticatePassword){
-                $ses_data = [
-                    'isLoggedIn' => TRUE,
-                    'id' => $data['id'],
-                    'username' => $data['username'],
-                    'slug' => $data['slug'],
-                    'status' => $data['status_user']
-                    // 'nokk' => $data['NOKK'],
-                    // 'nik' => $data['NIK'],
-                    // 'email' => $data['email'],
-                ];
-                $session->set($ses_data);
-                
-                // if (!$this->pasienModel->isProfileComplete($data['id'])) {
-                //     return redirect()->to('/pasien/lengkapi_profil');
-                // }
-                $session->setFlashdata('successLogin', 'Selamat datang');
-                return redirect()->to(base_url('/beranda'));
+        if($data){
+            if($data['username'] === $username){
+                $pass = $data['password'];
+                $authenticatePassword = password_verify($password, $pass);
+                if($authenticatePassword){
+                    $ses_data = [
+                        'isLoggedIn' => TRUE,
+                        'id' => $data['id'],
+                        'username' => $data['username'],
+                        'slug' => $data['slug'],
+                        'status' => $data['status_user']
+                        // 'nokk' => $data['NOKK'],
+                        // 'nik' => $data['NIK'],
+                        // 'email' => $data['email'],
+                    ];
+                    $session->set($ses_data);
+                    
+                    // if (!$this->pasienModel->isProfileComplete($data['id'])) {
+                    //     return redirect()->to('/pasien/lengkapi_profil');
+                    // }
+                    $session->setFlashdata('successLogin', 'Selamat datang');
+                    return redirect()->to(base_url('/beranda'));
+                } else {
+                    $session->setFlashdata('msg', 'email atau password salah!');
+                    return redirect()->to(base_url('/auth/login'));
+                }
             } else {
                 $session->setFlashdata('msg', 'email atau password salah!');
-                return redirect()->to(base_url('/auth/login'));
+                return redirect()->to(base_url('auth/login'));
             }
-        } else {
+        }else{
             $session->setFlashdata('msg', 'email atau password salah!');
             return redirect()->to(base_url('auth/login'));
         }

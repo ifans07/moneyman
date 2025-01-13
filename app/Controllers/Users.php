@@ -18,6 +18,7 @@ class Users extends BaseController
     {
         $data = [
             'title' => 'Home',
+            'deskripsi' => "Atur profil pengguna, sesuaikan preferensi, dan pastikan keamanan data pribadi Anda."
         ];
         return view('landing', $data);
     }
@@ -26,6 +27,7 @@ class Users extends BaseController
     {
         $data = [
             'title' => 'Profil Pengguna',
+            'deskripsi' => "Atur profil pengguna, sesuaikan preferensi, dan pastikan keamanan data pribadi Anda.",
             'user' => $this->userModel->where('id', session()->get('id'))->first()
         ];
         return view('user/index', $data);

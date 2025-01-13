@@ -157,8 +157,8 @@ class Home extends BaseController
             'expenseIncome' => $currentData,
             'allIncome' => $this->income->getIncomeData(),
             'allExpense' => $this->income->getExpensesData(),
-            'kategori_expense' => $this->kategori_expense->findAll(),
-            'kategori_income' => $this->kategori_income->findAll(),
+            'kategori_expense' => $this->kategori_expense->orderBy("CASE WHEN kategori = 'Lain-lain' THEN 1 ELSE 0 END", 'ASC')->orderBy('kategori', 'ASC')->findAll(),
+            'kategori_income' => $this->kategori_income->orderBy("CASE WHEN kategori = 'Lain-lain' THEN 1 ELSE 0 END", 'ASC')->orderBy('kategori', 'ASC')->findAll(),
             // 'monthlyexpenses' => json_encode($dataPerMonthExpense),
             // 'monthlyincome' => json_encode($dataPerMonthIncome),
             'monthlyexpenses' => json_encode($expenseValues),
@@ -192,7 +192,8 @@ class Home extends BaseController
     public function kategori()
     {
         $data = [
-            'title' => 'Kategori'
+            'title' => 'Kategori',
+            'deskripsi' => "Buat, ubah, dan hapus kategori untuk membantu mengorganisir pemasukan serta pengeluaran Anda secara terstruktur."
         ];
         return view('kategori', $data);
     }
@@ -201,8 +202,8 @@ class Home extends BaseController
     public function fetchCategory()
     {
         return $this->response->setJSON([
-            'k_income' => $this->kategori_income->findAll(),
-            'k_expense' => $this->kategori_expense->findAll()
+            'k_income' => $this->kategori_income->orderBy("CASE WHEN kategori = 'Lain-lain' THEN 1 ELSE 0 END", 'ASC')->orderBy('kategori', 'ASC')->findAll(),
+            'k_expense' => $this->kategori_expense->orderBy("CASE WHEN kategori = 'Lain-lain' THEN 1 ELSE 0 END", 'ASC')->orderBy('kategori', 'ASC')->findAll()
         ]);
     }
 
@@ -289,7 +290,8 @@ class Home extends BaseController
     public function savings()
     {
         $data = [
-            'title' => 'Tabungan Target'
+            'title' => 'Tabungan Target',
+            'deskripsi' => "Tetapkan target tabungan, lacak progres, dan rencanakan pencapaian finansial Anda secara bertahap."
         ];
         return view('savings', $data);
     }
@@ -438,6 +440,7 @@ class Home extends BaseController
 
         $data = [
             'title' => 'Analisis Keuangan',
+            'deskripsi' => "Analisis data keuangan Anda dengan grafik interaktif untuk memahami pola pengeluaran dan pemasukan secara mendalam.",
             'totalIncome' => $totalIncome,
             'totalExpense' => $totalExpense,
             'savings' => $savings,

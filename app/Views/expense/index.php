@@ -233,6 +233,35 @@
 </div>
 
 <script>
+    window.testing = ()=>{
+        let timerInterval;
+        Swal.fire({
+        title: "Data berhasil di tambahkan!",
+        html: "I will close & reload in <b></b> milliseconds.",
+        timer: 2000,
+        timerProgressBar: true,
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+            const timer = Swal.getPopup().querySelector("b");
+            timerInterval = setInterval(() => {
+            timer.textContent = `${Swal.getTimerLeft()}`;
+            }, 100);
+        },
+        willClose: () => {
+            clearInterval(timerInterval);
+        }
+        }).then((result) => {
+            /* Read more about handling dismissals below */
+            if (result.dismiss === Swal.DismissReason.timer) {
+                console.log("I was closed by the timer");
+                location.reload()
+            }
+        });
+    }
+</script>
+
+<script>
     let nominal = document.getElementById('nominal');
 
     nominal.addEventListener('keyup', function(e){
@@ -429,6 +458,30 @@
                     $('#expenseModal').modal('hide')
                     expensesFetch(dari, sampai)
                     showToast('Pengeluaran sudah di catat!', 'success');
+                    let timerInterval;
+                    Swal.fire({
+                    title: "Data berhasil di tambahkan!",
+                    html: "I will close & Reload in <b></b> milliseconds.",
+                    timer: 2000,
+                    timerProgressBar: true,
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                        const timer = Swal.getPopup().querySelector("b");
+                        timerInterval = setInterval(() => {
+                        timer.textContent = `${Swal.getTimerLeft()}`;
+                        }, 100);
+                    },
+                    willClose: () => {
+                        clearInterval(timerInterval);
+                    }
+                    }).then((result) => {
+                        /* Read more about handling dismissals below */
+                        if (result.dismiss === Swal.DismissReason.timer) {
+                            console.log("I was closed by the timer");
+                            location.reload()
+                        }
+                    });
                 }
             })
         })

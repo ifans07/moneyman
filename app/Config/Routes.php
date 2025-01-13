@@ -86,6 +86,7 @@ $routes->post('/delete/transaksi', 'Home::deletedTransaksi');
 $routes->get('/pakai', 'Pakai::index', ['filter' => 'auth']);
 $routes->post('/pakai/save', 'Pakai::savePakai');
 $routes->post('/pakai/update', 'Pakai::updatePakai');
+$routes->post('/pakai/delete', 'Pakai::hapusPakai');
 
 // soft delete
 $routes->post('/delete/expense', 'Expenses::deletedTransaksiExpense');
