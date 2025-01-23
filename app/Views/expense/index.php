@@ -263,7 +263,8 @@
 
 <script>
     let nominal = document.getElementById('nominal');
-
+    
+    
     nominal.addEventListener('keyup', function(e){
         nominal.value = formatRupiah(this.value)
     })

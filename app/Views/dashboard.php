@@ -142,9 +142,9 @@
                                             <i class="fa-solid fa-edit fs-2 text-secondary"></i>
                                         </button>
                                     </div>
-                                    <div class="d-flex align-items-center gap-3">
-                                        <div class="d-flex align-items-center justify-content-center rounded-3" style="width: 3rem; height: 3rem; background-color: #384c57; color: #fafafa;">
-                                            <i class="fa-solid <?= $ei['icon'] ?> text-warning"></i>
+                                    <div class="d-flex gap-2">
+                                        <div class="d-flex align-items-center justify-content-center rounded-3" style="width: 3rem; height: 3rem; background-color: #bad6ca; color: #fafafa;">
+                                            <i class="fa-solid <?= $ei['icon'] ?>" style="color: #384c57;"></i>
                                         </div>
                                         <div class="lh-1">
                                             <h5 style="font-size: 18px" class="mb-1 p-0"><?= $ei['name'] ?></h5>

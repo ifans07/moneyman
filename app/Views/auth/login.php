@@ -39,12 +39,12 @@
         <div class="">
             <form action="<?= base_url('auth/login/proses') ?>" method="post">
                 <div class="input-group flex-nowrap mb-3">
-                    <label for="" class="input-group-text"><i class="fa-solid fa-user"></i></label>
-                    <input type="text" class="form-control" placeholder="username or email" name="username" value="<?= old('username') ?>">
+                    <label for="" class="input-group-text bg-white" style="border-right: none;"><i class="fa-solid fa-user"></i></label>
+                    <input type="text" class="form-control" placeholder="username or email" name="username" value="<?= old('username') ?>" style="border-left: none;">
                 </div>
                 <div class="input-group mb-3">
-                    <label for="" class="input-group-text"><i class="fa-solid fa-lock"></i></label>
-                    <input type="password" class="form-control" placeholder="Password" name="password">
+                    <label for="" class="input-group-text bg-white" style="border-right: none;" id="eye"><i class="fa-solid fa-lock" id="icon"></i></label>
+                    <input type="password" class="form-control" placeholder="Password" name="password" style="border-left: none;" id="password">
                 </div>
                 <div class="mb-3 form-check">
                     <input type="checkbox" class="form-check-input" id="exampleCheck1">
@@ -94,6 +94,23 @@
             });
         </script>
     <?php endif; ?>
+    
+    <script>
+        $(document).ready(function(){
+            $('#eye').on('click', function(){
+                let password = $('#password').attr('type')
+                if(password == 'password'){
+                    $('#password').attr('type', 'text')
+                    $('#icon').removeClass('fa-lock')
+                    $('#icon').addClass('fa-unlock')
+                }else{
+                    $('#password').attr('type', 'password')
+                    $('#icon').removeClass('fa-unlock')
+                    $('#icon').addClass('fa-lock')
+                }
+            })
+        })
+    </script>
 </body>
 </html>
 

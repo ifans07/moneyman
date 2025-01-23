@@ -228,7 +228,22 @@
             height: 100%;
             /* z-index: 99; */
         }
-        
+
+        .bungkus{
+            background-color: rgba(254,254,254,.2);
+            backdrop-filter: blur(12px);   
+        }
+        .bungkus::before{
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255,255,255,.2);
+            bottom: 0;
+            right: 0;
+            border-radius: 1rem;
+            pointer-events: none;
+        }
     </style>
 
 </head>
@@ -242,8 +257,8 @@
             <section id="hero" class="hero" style="background:linear-gradient(rgba(215,225,235,0.8), rgba(215,225,235,0.4)), url('<?= base_url('/assets/hero/hero1.jpg') ?>'), fixed center center; background-size:cover; background-repeat: no-repeat;">
                 <div class="container">
                     <div class="d-flex align-items-center justify-content-center">
-                        <div class="text-center text-secondary">
-                            <h2 class="fw-bold">MoneyMan</h2>
+                        <div class="text-center text-secondary p-3 rounded-3 position-relative bungkus">
+                            <h2 class="fw-bold" style="color: #000;">MoneyMan</h2>
                             <?php if(!empty($title)): ?>
                                 <h3><?= $title ?></h3>
                             <?php else: ?>

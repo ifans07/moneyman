@@ -64,12 +64,12 @@
                     <input type="email" class="form-control" placeholder="Email" name="email" value="<?= old('email') ?>">
                 </div>
                 <div class="input-group flex-nowrap mb-3">
-                    <label for="" class="input-group-text"><i class="fa-solid fa-lock"></i></label>
-                    <input type="password" class="form-control" placeholder="Password" name="password">
+                    <label for="exampleCheck1" class="input-group-text eye 1"><i class="fa-solid fa-lock"></i></label>
+                    <input type="password" class="form-control password" placeholder="Password" name="password" id="exampleCheck1">
                 </div>
                 <div class="input-group flex-nowrap mb-3">
-                    <label class="input-group-text" for="exampleCheck1"><i class="fa-solid fa-lock"></i></label>
-                    <input type="password" class="form-control" id="exampleCheck1" placeholder="Re-password" name="confirm_password">
+                    <label class="input-group-text eye 2" for="exampleCheck2"><i class="fa-solid fa-lock"></i></label>
+                    <input type="password" class="form-control password" id="exampleCheck2" placeholder="Re-password" name="confirm_password">
                 </div>
                 <div class="d-flex justify-content-around gap-1">
                     <button type="reset" class="btn btn-light fw-medium w-50"><i class="fa-solid fa-times text-danger"></i> Reset</button>
@@ -90,6 +90,40 @@
     <script src="https://unpkg.com/@popperjs/core@2"></script>
     <script src="<?= base_url('node_modules/bootstrap/dist/js/bootstrap.bundle.js') ?>"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    <script>
+        $(document).ready(function(){
+            let password0 = $('.password')
+            $('.eye').on('click', function(){
+                let data = $(this)
+                let icon = $(this).find('.fa-solid')
+                let password1 = $('#exampleCheck1').attr('type')
+                let password2 = $('#exampleCheck2').attr('type')
+
+                if(data[0].classList[2] == '1'){
+                    if(password1 == 'password'){
+                        $('#exampleCheck1').attr('type', 'text')
+                        icon.removeClass('fa-lock')
+                        icon.addClass('fa-unlock')
+                    }else{
+                        $('#exampleCheck1').attr('type', 'password')
+                        icon.removeClass('fa-unlock')
+                        icon.addClass('fa-lock')
+                    }
+                }else{
+                    if(password2 == 'password'){
+                        $('#exampleCheck2').attr('type', 'text')
+                        icon.removeClass('fa-lock')
+                        icon.addClass('fa-unlock')
+                    }else{
+                        $('#exampleCheck2').attr('type', 'password')
+                        icon.removeClass('fa-unlock')
+                        icon.addClass('fa-lock')
+                    }
+                }
+            })
+        })
+    </script>
 </body>
 </html>
 
