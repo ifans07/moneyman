@@ -1,3 +1,5 @@
+document.addEventListener("DOMContentLoaded", function(){
+
 function toggleNavbar() {
   let scrollPos = window.scrollY;
   let header = document.querySelector("#header");
@@ -14,11 +16,12 @@ window.addEventListener("scroll", toggleNavbar);
 // toggle menu
 let navbar = document.querySelector(".nav-list");
 let toggle = document.querySelector(".toggle");
-let iconToggle = document.querySelector(".toggle .fa-solid");
-let toggleDark = document.querySelector(".toggle-darkmode");
-let iconDarkMode = document.querySelector(".toggle-darkmode .fa-solid");
-let clipBg = document.querySelector(".animate-bg");
-let clipBg1 = document.querySelector(".animate-bg1");
+let iconToggle = document.querySelector(".toggle i");
+// let toggleDark = document.querySelector(".toggle-darkmode");
+// let iconDarkMode = document.querySelector(".toggle-darkmode .fa-solid");
+// let clipBg = document.querySelector(".animate-bg");
+// let clipBg1 = document.querySelector(".animate-bg1");
+let headerAndroid = document.getElementById('header-android');
 
 document.querySelector(".toggle").addEventListener("click", function () {
   navbar.classList.toggle("active");
@@ -27,11 +30,13 @@ document.querySelector(".toggle").addEventListener("click", function () {
     iconToggle.classList.remove("fa-bars");
     iconToggle.style.transform = "rotate(180deg)";
     iconToggle.style.transition = "transform 0.5s ease";
+    headerAndroid.style.display = "none"
   } else {
     iconToggle.classList.add("fa-bars");
     iconToggle.classList.remove("fa-times");
     iconToggle.style.transform = "rotate(0deg)";
     iconToggle.style.transition = "transform 0.5s ease";
+    headerAndroid.style.display = "block"
   }
 });
 
@@ -42,8 +47,11 @@ document.addEventListener("click", function (e) {
     iconToggle.classList.remove("fa-times");
     iconToggle.style.transform = "rotate(0deg)";
     iconToggle.style.transition = "transform 0.5s ease";
+    headerAndroid.style.display = "block"
   }
 });
+
+}) 
 
 // toggleDark.addEventListener("click", function () {
 //   iconDarkMode.classList.toggle("fa-sun");

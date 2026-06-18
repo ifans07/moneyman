@@ -19,7 +19,7 @@
             </ul>
             <div class="btn-login d-flex justify-content-end gap-2">
                 <?php if(session()->get('isLoggedIn')): ?>
-                    <div>
+                    <div id="tmb-logout">
                         <a href="<?= base_url('/auth/logout') ?>" class="btn btn-danger"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
                     </div>
                 <?php else: ?>
@@ -38,5 +38,54 @@
                 <i class="fa-solid fa-bars" style="color: #fafafa"></i>
             </div>
         </div>
+    </div>
+</header>
+
+<header class="fixed-bottom shadow-lg d-md-none" style="background-color: #223642; border-top-right-radius: 20px; border-top-left-radius: 20px; transition: .2s linear" id="header-android">
+    <div class="d-flex py-1 align-items-center justify-content-around">
+        <a href="<?= base_url('income') ?>" class="bg-primary text-primary d-flex align-items-center justify-content-center rounded-circle" style="background-color: #1abc9c !important;color:#1abc9c;transition: .2s linear; <?= ($title == "Income")? 'width: 60px; height: 60px;cursor:pointer; transform: translateY(-32px);border:4px solid #223642;' :"width: 50px; height: 50px;" ?>"
+            <?php if($title !== "Income"): ?>
+            onmouseover="this.style.transform='translateY(-32px)'" 
+            onmouseout="this.style.transform='translateY(0)'"
+            <?php endif; ?>
+        >
+            <i class="fa-solid fa-coins fs-4"></i>
+        </a>
+        <a href="<?= base_url('expenses') ?>" class="bg-primary text-primary d-flex align-items-center justify-content-center rounded-circle" style="background-color: #1abc9c !important;color:#1abc9c; transition: .2s linear; <?= ($title == "Expenses")? 'width: 60px; height: 60px;cursor:pointer; transform: translateY(-32px);border:4px solid #223642;' :"width: 50px; height: 50px;" ?>"
+        <?php if($title !== "Expenses"): ?>
+            onmouseover="this.style.transform='translateY(-32px)'" 
+            onmouseout="this.style.transform='translateY(0)'"
+        <?php endif ?>
+        >
+            <i class="fa-solid fa-wallet fs-4"></i>
+        </a>
+        <?php if($title == "Dashboard"): ?>
+            <div class="bg-primary text-primary d-flex align-items-center justify-content-center rounded-circle" style="background-color: #1abc9c !important;color:#1abc9c;width: 60px; height: 60px;cursor:pointer; transform: translateY(-32px);border:4px solid #223642" onclick="transaksiModal()">
+                <i class="fa-solid fa-plus fs-4"></i>
+            </div>
+        <?php else: ?>
+            <a href="<?= base_url('beranda') ?>" class="bg-primary text-primary d-flex align-items-center justify-content-center rounded-circle" style="background-color: #1abc9c !important;color:#1abc9c;width: 50px; height: 50px; transition: .2s linear;"
+                onmouseover="this.style.transform='translateY(-32px)'" 
+                onmouseout="this.style.transform='translateY(0)'"
+            >
+                <i class="fa-solid fa-home fs-4"></i>
+            </a>
+        <?php endif; ?>
+        <a href="<?= base_url('savings') ?>" class="bg-primary text-primary d-flex align-items-center justify-content-center rounded-circle" style="background-color: #1abc9c !important;color:#1abc9c;transition: .2s linear; <?= ($title == "Tabungan Target")? 'width: 60px; height: 60px;cursor:pointer; transform: translateY(-32px);border:4px solid #223642;' :"width: 50px; height: 50px;" ?>"
+        <?php if($title !== "Tabungan Target"): ?>
+            onmouseover="this.style.transform='translateY(-32px)'" 
+            onmouseout="this.style.transform='translateY(0)'"
+            <?php endif; ?>
+        >
+            <i class="fa-solid fa-piggy-bank fs-4"></i>
+        </a>
+        <a href="<?= base_url('pakai') ?>" class="bg-primary text-primary d-flex align-items-center justify-content-center rounded-circle" style="background-color: #1abc9c !important;color:#1abc9c;transition: .2s linear; <?= ($title == "Pakai")? 'width: 60px; height: 60px;cursor:pointer; transform: translateY(-32px);border:4px solid #223642;' :"width: 50px; height: 50px;" ?>"
+        <?php if($title !== "Pakai"): ?>
+            onmouseover="this.style.transform='translateY(-32px)'" 
+            onmouseout="this.style.transform='translateY(0)'"
+            <?php endif; ?>
+        >
+            <i class="fa-solid fa-box fs-4"></i>
+        </a>
     </div>
 </header>

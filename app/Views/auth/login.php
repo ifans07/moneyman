@@ -51,8 +51,8 @@
                     <label class="form-check-label text-light" for="exampleCheck1">Ingat saya</label>
                 </div>
                 <div class="d-flex justify-content-around gap-1">
-                    <button type="reset" class="btn btn-light fw-medium w-50"><i class="fa-solid fa-times text-danger"></i> Reset</button>
-                    <button type="submit" class="btn btn-secondary fw-medium w-50"><i class="fa-solid fa-sign-in"></i> Login</button>
+                    <!-- <button type="reset" class="btn btn-light fw-medium w-50"><i class="fa-solid fa-times text-danger"></i> Reset</button> -->
+                    <button type="submit" class="btn btn-secondary fw-medium w-100"><i class="fa-solid fa-sign-in"></i> Login</button>
                 </div>
                 <div class="mt-3 d-flex flex-column text-center">
                     <a href="<?= base_url('/auth/lupa-password') ?>" class="text-light">Lupa kata sandi?</a>

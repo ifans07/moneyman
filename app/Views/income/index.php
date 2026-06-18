@@ -31,10 +31,15 @@
                     <div class="icon-box">
                         <i class="fa-solid fa-piggy-bank"></i>
                     </div>
-                    <h3>Income</h3>
+                    <div class="lh-1">
+                        <h2>Income</h2>
+                        <div style="margin-top:-3px">
+                            <small class="text-muted fs-6"><?= date('F') ?></small>
+                        </div>
+                    </div>
                 </div>
                 <div class="">
-                    <button class="btn icon-box" onclick="openIncomeModal()"><i class="fa-solid fa-plus"></i></button>
+                    <button class="btn icon-box shadow-custom" onclick="openIncomeModal()"><i class="fa-solid fa-plus"></i></button>
                 </div>
             </div>
 
@@ -50,7 +55,7 @@
                                 $no=1;
                                 for($i=0; $i<count($bulan); $i++):
                             ?>
-                                <div class="month-item" data-month="<?= $no++ ?>"><?= $bulan[$i] ?></div>
+                                <div class="month-item shadow-custom" data-month="<?= $no++ ?>"><?= $bulan[$i] ?></div>
                             <?php endfor; ?>
                         </div>
 
@@ -69,8 +74,20 @@
                         <label for="endDate" class="form-label">End Date:</label>
                         <input type="date" id="endDate" class="form-control" value="<?= date('Y-m-t') ?>">
                     </div>
-                    <div class="col-md-2 d-flex align-items-end">
+                    <!-- <div class="col-md-2 d-flex align-items-end">
                         <button class="btn btn-primary w-100 fw-medium" onclick="fetchIncome()" disabled><i class="fa-solid fa-filter"></i> Filter</button>
+                    </div> -->
+                    <div class="col-md-2 d-flex align-items-end">
+                        <div class="input-group">
+                            <select name="" id="" class="form-control" style="border-right: none;">
+                                <option value="">Kategori</option>
+                                <option value="">Tertinggi</option>
+                                <option value="">Terendah</option>
+                                <option value="">expense</option>
+                                <option value="">income</option>
+                            </select>
+                            <span class="input-group-text bg-light" id="basic-addon1" style="border-left: none;"><i class="fa-solid fa-filter"></i></span>
+                        </div>
                     </div>
                 </div>
 
@@ -116,8 +133,13 @@
                 </div>
 
                 <!-- Chart -->
-                <div class="mb-3 chart-container bg-light shadow-custom rounded-3 p-3">
-                    <canvas id="incomeChart" style="display: none"></canvas>
+                <div class="d-flex flex-md-row flex-column gap-2 mb-3">
+                    <div class="w-100 chart-container bg-light shadow-custom rounded-3 p-3">
+                        <canvas id="incomeChart" style="display: none"></canvas>
+                    </div>
+                    <div class="w-100 chart-container bg-light shadow-custom rounded-3 p-3">
+                        <canvas id="lineChart"></canvas>
+                    </div>
                 </div>
 
                 <div class="mb-3">
@@ -128,7 +150,10 @@
                 </div>
 
                 <div class="mb-3">
-                    <h5>Incomes List</h5>
+                    <div class="d-flex justify-content-between">
+                        <h5>Incomes List</h5>
+                        <span class="text-muted form-text">Jumlah transaksi: <span id="jml-data"></span></span>
+                    </div>
                     <div id="listIncome" class="row g-2">
                         <div class="d-flex bg-light shadow-custom p-3 rounded-3" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="testing">
                             <div class="icon-box">
@@ -174,7 +199,7 @@
 
                     <div>
                         <label for="tanggl" class="form-label">Tanggal</label>
-                        <input type="date" class="form-select" id="tanggal-keluar">
+                        <input type="date" class="form-select" id="tanggal-keluar" value="<?= date('Y-m-d') ?>">
                     </div>
 
                     <div>
@@ -182,12 +207,22 @@
                         <input type="text" class="form-control" id="name">
                     </div>
 
-                    <div class="">
+                    <div class="mb-3">
                         <label for="cicilan" class="form-label">Jumlah</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fa-solid fa-rupiah-sign"></i></span>
-                            <input type="text" class="form-control" placeholder="0" aria-label="Username" aria-describedby="basic-addon1" id="nominal" value="">
+                            <input type="text" class="form-control" placeholder="0" aria-label="Username" aria-describedby="basic-addon1" id="nominal" value="" inputmode="numeric">
                         </div>
+                    </div>
+
+                    <div>
+                        <label for="dompet">Dompet (Optional)</label>
+                        <select name="dompet" id="dompet" class="form-select">
+                            <option value="">--- Pilih Dompet (Optional) ---</option>
+                            <?php foreach($dompet as $d): ?>
+                                <option value="<?= $d['id'] ?>"><?= $d['nama_dompet'] ?> - Rp <?= number_format($d['saldo'],0,'.','.') ?></option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
 
                     <div>
@@ -308,7 +343,7 @@
                                 <div class="lh-1">
                                     <h6>${income.name_income}</h6>
                                     <small class="text-muted">${income.description}</small><br>
-                                    <small class="text-muted">Tanggal: <span class="fw-semibold">${tanggal}</span></small>
+                                    <small class="text-muted">${(income.id_dompet != 0)?income.nama_dompet:"Optional"}: <span class="fw-semibold">${tanggal}</span></small>
                                 </div>
                                 <div class="">
                                     <span class="fw-medium fs-5 text-success">Rp${formatRupiah(income.amount)}</span>
@@ -318,6 +353,7 @@
                     `
                 })
                 $('#listIncome').html(html)
+                $('#jml-data').html(data.length)
                 // $('[data-bs-toggle="tooltip"]').tooltip();
                 // Initialize tooltip
                 const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
@@ -401,6 +437,7 @@
         $('#addIncomeForm').on('submit', function(e){
             e.preventDefault();
             let angka = $('#nominal').val()
+            let dompet = $('#dompet').val()
             let angkapisah = angka.split(".")
             let nominal = angkapisah.join("")
             $.ajax({
@@ -410,6 +447,7 @@
                     tanggal: $('#tanggal-keluar').val(),
                     name: $('#name').val(),
                     jumlah: nominal,
+                    dompet: dompet,
                     kategori: $('#kategori').val(),
                     catatan: $('#catatan').val(),
                 },
@@ -490,7 +528,7 @@
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Pemasukan (Rp)',
+                    label: 'Pemasukan Per kategori (Rp)',
                     data: values,
                     backgroundColor: [
                         'rgba(75, 192, 192, 0.2)',
@@ -711,7 +749,7 @@ fetchComparisonData()
             if (monthValue === month) {
                 item.classList.add('active');
                 // Scroll to the active month
-                item.scrollIntoView({ inline: 'center', behavior: 'smooth' });
+                // item.scrollIntoView({ inline: 'center', behavior: 'smooth' });
             } else {
                 item.classList.remove('active');
             }
@@ -752,6 +790,67 @@ fetchComparisonData()
             // setTanggal("bulan", tanggalAwal, tanggalAkhirFormatted)
         });
     });
+</script>
+
+<!-- grafik trends pemasukan -->
+<script>
+    $.ajax({
+        url: "<?= base_url('/api/trendsdataincome') ?>",
+        method: 'GET',
+        dataType: 'JSON',
+        success: function(data){
+            trendsIncome(data.nama, data.nilai)
+        }
+    })
+    const trendsIncome = (label, value)=>{
+        const ctx = document.getElementById('lineChart').getContext('2d');
+        const lineChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: label,
+            datasets: [{
+            label: 'Trends Pemasukan Bulanan (Rp)',
+            data: value,
+            backgroundColor: 'rgba(59, 130, 246, 0.2)',
+            borderColor: 'rgba(59, 130, 246, 1)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.4,
+            pointBackgroundColor: '#3B82F6',
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+            legend: {
+                position: 'top',
+                labels: {
+                font: {
+                    size: 14
+                }
+                }
+            },
+            tooltip: {
+                callbacks: {
+                label: function(context) {
+                    return 'Rp ' + context.formattedValue;
+                }
+                }
+            }
+            },
+            scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                callback: function(value) {
+                    return 'Rp ' + value.toLocaleString();
+                }
+                }
+            }
+            }
+        }
+        });
+    }
 </script>
 
 <?= $this->endSection() ?>

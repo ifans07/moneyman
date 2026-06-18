@@ -57,6 +57,7 @@ $routes->post('/api/topkategori', 'Expenses::getTopKategori');
 $routes->post('/api/expenseskategori', 'Expenses::getExpensesKategori');
 $routes->post('/api/expenses/analysis', 'Expenses::getAnalysisExpenses');
 $routes->get('/api/comparisonexpenses', 'Expenses::getComparisonData');
+$routes->get('/api/trendsdataexpense', 'Expenses::trendsExpense');
 
 // income
 $routes->get('/income', 'Income::index', ['filter' => 'auth']);
@@ -68,6 +69,7 @@ $routes->post('/api/topkategori/income', 'Income::getTopKategori');
 $routes->post('/api/incomekategori', 'Income::getIncomeKategori');
 $routes->post('/api/income/analysis', 'Income::getAnalysisIncome');
 $routes->get('/api/comparisonincome', 'Income::getComparisonData');
+$routes->get('/api/trendsdataincome', 'Income::trendsIncome');
 
 // icons
 $routes->get('/ikon', 'Home::getIcons');
@@ -78,7 +80,7 @@ $routes->get('/', 'Users::index');
 // dashboard
 $routes->post('/saving/transaksi', 'Home::savingTransaksi');
 $routes->get('/kalendar', 'Home::kalendarAnalisis', ['filter' => 'auth']);
-$routes->get('/dataanalisiskalendar', 'Home::dataAnalisisKalendar');
+$routes->get('/dataanalisiskalendar', 'Home::dataAnalisisKalendar', ['filter' => 'auth']);
 $routes->post('/delete/transaksi', 'Home::deletedTransaksi');
 
 
@@ -91,3 +93,14 @@ $routes->post('/pakai/delete', 'Pakai::hapusPakai');
 // soft delete
 $routes->post('/delete/expense', 'Expenses::deletedTransaksiExpense');
 $routes->post('/delete/income', 'Income::deletedTransaksiIncome');
+
+// filter
+$routes->post('/filter/dashboard', 'Filter::index');
+// $routes->get('/filter/dashboard/(:segment)/(:segment)/(:segment)/(:segment)', 'Filter::index/$1/$2/$3/$4');
+$routes->post('/filter/reset/dashboard', 'Filter::resetDashboard');
+$routes->get('/filter/chart/dashboard/(:segment)/(:segment)', 'Filter::chartDashboard/$1/$2');
+$routes->post('/filter/chart/dash', 'Filter::chartDash');
+
+// dompet
+$routes->post('/dompet/add', 'Dompet::addDompet');
+$routes->get('/dompet/detail/(:segment)', 'Dompet::dompetDetail/$1', ['filter' => 'auth']);

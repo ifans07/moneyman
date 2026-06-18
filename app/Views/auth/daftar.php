@@ -41,7 +41,7 @@
         </div>
 
         <!-- Menampilkan Semua Pesan Error -->
-         <div>
+        <div>
         <?php if (isset(session('gagal')['validation']) && !empty(session('gagal')['validation'])): ?>
             <div class="alert alert-danger p-1">
                 <ul style="list-style: none;">
@@ -72,8 +72,8 @@
                     <input type="password" class="form-control password" id="exampleCheck2" placeholder="Re-password" name="confirm_password">
                 </div>
                 <div class="d-flex justify-content-around gap-1">
-                    <button type="reset" class="btn btn-light fw-medium w-50"><i class="fa-solid fa-times text-danger"></i> Reset</button>
-                    <button type="submit" class="btn btn-secondary fw-medium w-50"><i class="fa-solid fa-sign-in"></i> Daftar</button>
+                    <!-- <button type="reset" class="btn btn-light fw-medium w-50"><i class="fa-solid fa-times text-danger"></i> Reset</button> -->
+                    <button type="submit" class="btn btn-secondary fw-medium w-100"><i class="fa-solid fa-sign-in"></i> Daftar</button>
                 </div>
                 <div class="mt-3 d-flex flex-column text-center">
                     <p class="text-primary">Sudah punya akun? <a href="<?= base_url('/auth/login') ?>" class="text-light">Login</a></p>

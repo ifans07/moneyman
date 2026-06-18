@@ -9,7 +9,12 @@
                     <div class="icon-box">
                         <i class="fa-solid fa-box"></i>
                     </div>
-                    <h2>Pakai</h2>
+                    <div class="lh-1">
+                        <h2>Pakai</h2>
+                        <div style="margin-top:-3px">
+                            <small class="text-muted fs-6"><?= date('F') ?></small>
+                        </div>
+                    </div>
                 </div>    
                 <div>
                     <button class="btn icon-box" onclick="openPakaiModal()"><i class="fa-solid fa-plus"></i></button>
@@ -63,7 +68,7 @@
                             $interval = $date1->diff($date2);
                         ?>
                     <div class="col" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="<?= $startDate . " s/d ". $endDate ?>">
-                        <div class="p-3 shadow-custom rounded-4 position-relative btn-pakai overflow-hidden" style="background-color: #fafafa">
+                        <div class="p-3 shadow-custom rounded-4 position-relative btn-pakai overflow-hidden bg-white">
                             <?php if($p['tanggal_selesai'] != '0000-00-00'): ?>
                             <div class="tutup rounded-3"></div>
                             <?php endif; ?>

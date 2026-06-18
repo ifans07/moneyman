@@ -39,13 +39,14 @@
         .header {
             position: relative;
             background: linear-gradient(rgba(215,225,235,0.8), rgba(215,225,235,0.6)), url('<?= base_url('/assets/hero/hero1.jpg') ?>') no-repeat center center/cover;
-            height: 600px;
+            height: 100vh;
             color: #fafafa;
             text-align: center;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-direction: column;
+            background-attachment: fixed;
         }
         .header::after {
             content: "";
@@ -194,16 +195,17 @@
         .footer p, .footer li {
             font-size: 14px;
         }
+        /* #1abc9c */
     </style>
 </head>
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg fixed-top">
+    <nav class="navbar navbar-expand-lg py-3 fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="#"><i class="fa-solid fa-money-bill"></i> MoneyMan</a>
+            <a class="navbar-brand" href="#"><i class="fa-solid fa-money-bill" style="margin-right: -8px;"></i> MoneyMan</a>
             <button class="navbar-toggler text-light" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <!-- <span class="navbar-toggler-icon"></span> -->
-                 <i class="fa-solid fa-bars display-5 text-light"></i>
+                <i class="fa-solid fa-bars display-5 text-light"></i>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
@@ -220,7 +222,7 @@
                         <a class="nav-link" href="#pricing">Pricing</a>
                     </li>
                     <li class="nav-item">
-                        <a class="btn btn-primary text-light px-4" href="<?= base_url('/auth/login') ?>">Get Started <i class="fa-solid fa-hand-point-right"></i></a>
+                        <a class="btn fw-medium text-dark px-4" style="background-color: #bad6ca !important;" href="<?= base_url('/auth/login') ?>">Login <i class="fa-solid fa-hand-point-right"></i></a>
                     </li>
                 </ul>
             </div>
@@ -232,7 +234,7 @@
         <i class="fa-solid fa-money-bill display-5" style="color: #223642;"></i>
         <h1 style="color: #223642;">Welcome to MoneyMan</h1>
         <p style="color: #223642;">Your personal financial assistant.</p>
-        <a href="<?= base_url('auth/daftar') ?>" class="btn btn-primary btn-lg"><i class="fa-solid fa-rocket"></i> Start Saving Today</a>
+        <a href="<?= base_url('auth/daftar') ?>" class="btn btn-lg shadow-lg" style="background-color: #bad6ca !important;"><i class="fa-solid fa-rocket"></i> Start Saving Today</a>
         <div class="scroll-down" onclick="scrollToFeatures()">
             <i class="fas fa-angle-double-down text-primary"></i>
         </div>

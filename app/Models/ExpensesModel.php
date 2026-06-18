@@ -12,7 +12,7 @@ class ExpensesModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = true;
     protected $protectFields    = true;
-    protected $allowedFields    = ['id_user', 'id_kategori_expenses', 'name_expenses', 'amount', 'description', 'date_expenses', 'status', 'slug', 'deleted_at'];
+    protected $allowedFields    = ['id_user', 'id_dompet', 'id_kategori_expenses', 'name_expenses', 'amount', 'description', 'date_expenses', 'status', 'slug', 'deleted_at'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
@@ -46,12 +46,13 @@ class ExpensesModel extends Model
 
     public function getExpenses($dari='Y-m-01', $sampai='Y-m-t')
     {
-        return $this->select('id_user, id_kategori_expenses, name_expenses, amount, description, date_expenses, status, expenses.slug, kategori, icon')
+        return $this->select('expenses.id_user, id_dompet, nama_dompet, id_kategori_expenses, name_expenses, amount, expenses.description, date_expenses, expenses.status, expenses.slug, kategori, icon')
         ->join('kategori_expenses', 'kategori_expenses.id=expenses.id_kategori_expenses')
+        ->join('dompet', 'dompet.id=expenses.id_dompet', 'left')
         // ->where('DATE_FORMAT(date_expenses, "%Y-%m")', date('Y-m'))
         ->where('date_expenses >=', date($dari))
         ->where('date_expenses <=', date($sampai))
-        ->where('id_user', session()->get('id'))
+        ->where('expenses.id_user', session()->get('id'))
         ->orderBy('date_expenses', 'DESC')
         ->findAll();
     }
@@ -161,12 +162,20 @@ class ExpensesModel extends Model
             ->getRow()->amount;
     }
 
-    public function getExpenseByCategory($userId)
+    public function getExpenseByCategory($startdate = null, $enddate = null)
     {
-        return $this->db->table('expenses')
-            ->select('kategori, SUM(amount) as total')
-            ->join('kategori_expenses', 'kategori_expenses.id = expenses.id_kategori_expenses')
-            ->where('id_user', $userId)
+        $query = $this->db->table('expenses')
+        ->select('kategori, SUM(amount) as total, expenses.date_expenses')
+        ->join('kategori_expenses', 'kategori_expenses.id = expenses.id_kategori_expenses')
+        ->where('id_user', session()->get('id'));
+        
+        if($startdate && $enddate){
+            $query
+            ->where('expenses.date_expenses >=', $startdate)
+            ->where('expenses.date_expenses <=', $enddate);
+        }
+        
+        return $query
             ->where('expenses.deleted_at', null)
             ->groupBy('kategori')
             ->get()
@@ -206,4 +215,44 @@ class ExpensesModel extends Model
         return $combinedData;
     }
 
+    public function getChartExpense($startdate = null, $enddate = null)
+    {
+        $query = $this->db->table('expenses')
+        ->select('kategori, amount, date_expenses')
+        ->join('kategori_expenses', 'kategori_expenses.id = expenses.id_kategori_expenses')
+        ->where('id_user', session()->get('id'));
+
+        if($startdate && $enddate){
+            $query->where('expenses.date_expenses >=', date($startdate))
+            ->where('expenses.date_expenses <=', date($enddate));
+        }
+
+        return $query
+        ->where('expenses.deleted_at', null)
+        ->get()
+        ->getResultArray();
+    }
+
+    public function dompetTotalExpense($idDompet)
+    {
+        return $this->db->table($this->table)
+        ->selectSum('amount')
+        ->join('dompet', 'dompet.id=expenses.id_dompet')
+        ->where('id_dompet', $idDompet)
+        ->where('expenses.deleted_at', null)
+        ->get()
+        ->getRow()->amount;
+    }
+
+    // data untuk grafik trends pengeluaran
+    public function getDataExpense()
+    {
+        $builder = $this->db->table($this->table);
+        $builder->select("DATE_FORMAT(date_expenses, '%b %Y') AS bulan_tahun, SUM(amount) AS total");
+        $builder->where('id_user', session()->get('id'));
+        $builder->where('deleted_at', null);
+        $builder->groupBy("YEAR(date_expenses), MONTH(date_expenses)");
+        $builder->orderBy("YEAR(date_expenses), MONTH(date_expenses)");
+        return $builder->get()->getResultArray();
+    }
 }

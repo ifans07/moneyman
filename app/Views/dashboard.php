@@ -21,7 +21,7 @@
     if($incomeDay['amount'] == null){
         $incomeHari = 0;
     }else{
-        $incomeHari = $incomeDay['amount'];
+        $incomeHari = number_format($incomeDay['amount'],0,'.','.');
     }
 
     $totalIncome = 0;
@@ -44,7 +44,6 @@
         $value[] = number_format(($totalIncome/$totalAmount)*100,0);
         $value[] = number_format(($totalExpense/$totalAmount)*100,0);
     }
-    // dd($value);
 ?>
 
     <section class="rounded-4 rounded-top-0 shadow" style="background-color: #384c57; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.07); transition: transform 0.2s; padding: 100px 0;">
@@ -96,7 +95,7 @@
                     </div>
                 </div>
             </div>
-            <div class="row g-2 mt-3" style="width: 100%; display: flex; justify-content: center; align-items: center;">
+            <div class="row g-2 mt-3" style="width: 100%; display: flex; justify-content: center; align-items: center;" id="chartData">
                 <div class="col-md-6" style="height: 400px; width: 400px;">
                     <canvas id="incomeChart"></canvas>
                 </div>
@@ -112,30 +111,70 @@
         <div class="container">
 
             <!-- Custom Period Input -->
+            <form action="">
             <div class="row mb-5 g-2" id="customPeriod">
                 <div class="col-md-5">
                     <label for="startDate" class="form-label">Start Date:</label>
-                    <input type="date" id="startDate" class="form-control" value="<?= date('Y-m-01') ?>">
+                    <input type="text" id="startDate" class="form-control period" placeholder="Pilih tanggal...">
                 </div>
                 <div class="col-md-5">
                     <label for="endDate" class="form-label">End Date:</label>
-                    <input type="date" id="endDate" class="form-control" value="<?= date('Y-m-t') ?>">
+                    <input type="text" id="endDate" class="form-control period" placeholder="Pilih tanggal...">
                 </div>
-                <div class="col-md-2 d-flex align-items-end">
+                <!-- <div class="col-md-2 d-flex align-items-end">
                     <button class="btn btn-primary w-100 fw-medium" onclick="fetchIncome()" disabled><i class="fa-solid fa-filter"></i> Filter</button>
+                </div> -->
+                <div class="col-md-2 d-flex align-items-end">
+                <div class="input-group">
+                    <button type="reset" class="btn btn-dark fw-medium w-100 rounded-3" style="background-color: #384c57" id="reset">Reset</button>
                 </div>
             </div>
+                <div class="row g-2">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <select name="" id="selectFilter" class="form-control" style="border-right: none;">
+                                <option value="">Semua data</option>
+                                <option value="tertinggi" disabled>Tertinggi</option>
+                                <option value="terendah" disabled>Terendah</option>
+                                <option value="expense">expense</option>
+                                <option value="income">income</option>
+                            </select>
+                            <span class="input-group-text bg-white" id="basic-addon1" style="border-left: none;"><i class="fa-solid fa-filter"></i></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <select name="" id="kategori" class="form-control" style="border-right: none;">
+                                <option value="">--- Pilih Kategori ---</option>
+                                <optgroup label="Kategori Income">
+                                    <?php foreach($kategori_income as $ki): ?>
+                                        <option value="<?= $ki['id'] ?>,<?= $ki['kategori'] ?>"><?= $ki['kategori'] ?></option>
+                                    <?php endforeach; ?>
+                                </optgroup>
+                                <optgroup label="Kategori Expense">
+                                    <?php foreach($kategori_expense as $ke): ?>
+                                        <option value="<?= $ke['id'] ?>,<?= $ke['kategori'] ?>"><?= $ke['kategori'] ?></option>
+                                    <?php endforeach; ?>
+                                </optgroup>
+                            </select>
+                            <span class="input-group-text bg-white" id="basic-addon1" style="border-left: none;"><i class="fa-solid fa-list"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </form>
 
-            <div class="row">
+            <div class="row" id="alldata">
                 <div class="col-md-6 mb-5">
-                    <div style="margin-bottom: 1.4rem;">
+                    <div style="margin-bottom: 1.4rem;" class="d-lg-flex justify-content-lg-between flex-wrap lh-1 align-items-lg-center">
                         <h2 style="color: #333333; font-size: 28px;">Transaksi Saat Ini</h2>
+                        <span class="text-muted form-text">Jumlah transaksi: <?= $jmltrx ?></span>
                     </div>
                     <div>
                         <div class="mb-3">
                             <?php if(count($expenseIncome) != 0): ?>
                             <?php foreach($expenseIncome as $ei): ?>
-                                <div class="d-flex align-items-center justify-content-between p-3 rounded-3 mb-2 position-relative overflow-hidden wrp-hapus" style="background-color: #f7f9fa; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.07); transition: transform 0.2s;">
+                                <div class="d-flex align-items-center justify-content-between p-3 rounded-3 mb-2 position-relative overflow-hidden wrp-hapus bg-white" style="background-color: #f7f9fa; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.07); transition: transform 0.2s;">
                                     <div class="grp-hapus">
                                         <button class="btn" onclick="hapusTransaksi('<?= $ei['slug'] ?>','<?= $ei['status'] ?>')" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Hapus"><i class="fa-solid fa-trash fs-2 text-danger"></i></button>
                                         <button class="btn disabled" style="border: none;" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="coming soon">
@@ -147,9 +186,15 @@
                                             <i class="fa-solid <?= $ei['icon'] ?>" style="color: #384c57;"></i>
                                         </div>
                                         <div class="lh-1">
-                                            <h5 style="font-size: 18px" class="mb-1 p-0"><?= $ei['name'] ?></h5>
-                                            <small class="m-0 p-0 form-text" style="font-size: 12px"><?= $ei['description'] ?></small><br>
-                                            <small class="text-muted" style="font-size: 12px"><?= $ei['tanggal'] ?></small>
+                                            <h5 style="font-size: 18px" class="mb-1 p-0 text-truncate"><?= $ei['name'] ?></h5>
+                                            <small class="potong m-0 p-0 form-text w-100 text-truncate d-sm-block d-block d-lg-block" style="font-size: 12px;"><?= $ei['description'] ?></small>
+                                            <small class="text-muted" style="font-size: 12px"><?= $ei['tanggal'] ?></small> - <small class="text-muted" style="font-size: 12px;">
+                                                <?php if(!empty($ei['nama_dompet'])): ?>
+                                                    <?= $ei['nama_dompet'] ?>
+                                                <?php else: ?>
+                                                    optional
+                                                <?php endif; ?>
+                                            </small>
                                         </div>
                                     </div>
                                     <div>
@@ -162,7 +207,7 @@
                             <?php endif; ?>
                         </div>
 
-                       <!-- Pagination Data A -->
+                        <!-- Pagination Data A -->
                         <nav aria-label="Page navigation example">
                             <ul class="pagination justify-content-center shadow-custom p-3 rounded-3" style="background-color: #384c57">
                                 <li class="page-item <?= ($pagerA['currentPage'] <= 1) ? 'disabled' : '' ?> shadow-custom rounded-3">
@@ -185,6 +230,7 @@
 
                     </div>
                 </div>
+
                 <div class="col-md-4 mb-3">
                     <div class="rounded-3" style="background-color: #bad6ca; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.07); transition: transform 0.2s;">
                         <div class="py-1 px-3">
@@ -228,7 +274,7 @@
                             <h2 style="font-size: 28px;">Jumlah Transaksi Terbanyak</h2>
                         </div>
                         <div class="mb-3">
-                            <ul class="list-group rounded-3" style="box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(17, 10, 10, 0.05), 0 2px 4px rgba(0, 0, 0, 0.07); transition: transform 0.2s;">
+                            <ul class="list-group rounded-3 bg-white" style="box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(17, 10, 10, 0.05), 0 2px 4px rgba(0, 0, 0, 0.07); transition: transform 0.2s;">
                                 <?php if(count($bigToSmall) != 0): ?>
                                 <?php foreach($bigToSmall as $bts): ?>
                                 <li class="list-group-item <?= ($bts['status'] == 1)?"text-success":"text-danger" ?>">Rp<?= number_format($bts['amount'],0,'.','.') ?> - <?= $bts['kategori'] ?> - <?= $bts['name'] ?></li>
@@ -296,7 +342,6 @@
                     <div class="rounded-3 tmb-trx" style="background-color: #384c57; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.07); transition: transform 0.2s;">
                         <a class="d-flex align-items-center justify-content-center flex-column p-3" onclick="transaksiModal()" style="cursor: pointer">
                             <i class="fa-solid fa-piggy-bank" style="font-size: 76px; color: #bad6ca"></i>
-                             <!-- <img src="<?= base_url('/icons/logoayam.webp') ?>" alt="" width="50" height="50" style="border-radius: 50%"> -->
                             <p style="color:#fafafa; font-size: 18px" class="fw-medium mt-3">Add Transaksi</p>
                         </a>
                     </div>
@@ -314,6 +359,7 @@
                         <a href="<?= base_url('/kalendar') ?>" class="btn btn-dark fw-medium w-100 rounded-3" style="background-color: #384c57" id="tes"><i class="fa-solid fa-chart-pie"></i> Analisis</a>
                     </div>
                 </div>
+
             </div>
         </div>
 
@@ -374,12 +420,23 @@
                                     <input type="text" class="form-control" id="name" name="nama-pengeluaran">
                                 </div>
             
-                                <div class="">
+                                <div class="mb-3">
                                     <label for="cicilan" class="form-label">Jumlah</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fa-solid fa-rupiah-sign"></i></span>
-                                        <input type="text" class="form-control" placeholder="0" aria-label="Username" aria-describedby="basic-addon1" id="nominal-pengeluaran" value="" name="jml">
+                                        <input type="text" class="form-control" placeholder="0" aria-label="Username" aria-describedby="basic-addon1" id="nominal-pengeluaran" value="" name="jml" inputmode="numeric">
                                     </div>
+                                </div>
+
+                                <div>
+                                    <label for="dompet">Dompet (Optional)</label>
+                                    <select name="dompet" id="dompet-expense" class="form-select">
+                                        <option value="">--- Pilih Dompet (Optional) ---</option>
+                                        <?php foreach($dompet as $d): ?>
+                                            <option value="<?= $d['id'] ?>" data-saldo="<?= $d['saldo'] ?>"><?= $d['nama_dompet'] ?> - Rp <?= number_format($d['saldo'],0,'.','.') ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                    <small id="dompet-warning" class="text-danger text-muted d-none">Saldo dompet tidak cukup!</small>
                                 </div>
             
                                 <div>
@@ -420,12 +477,22 @@
                                 <input type="text" class="form-control" id="name" name="nama-pemasukan">
                             </div>
         
-                            <div class="">
+                            <div class="mb-3">
                                 <label for="cicilan" class="form-label">Jumlah</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fa-solid fa-rupiah-sign"></i></span>
-                                    <input type="text" class="form-control" placeholder="0" aria-label="Username" aria-describedby="basic-addon1" id="nominal-pemasukan" value="" name="jml">
+                                    <input type="text" class="form-control" placeholder="0" aria-label="Username" aria-describedby="basic-addon1" id="nominal-pemasukan" value="" name="jml" inputmode="numeric">
                                 </div>
+                            </div>
+
+                            <div>
+                                <label for="dompet">Dompet (Optional)</label>
+                                <select name="dompet" id="dompet" class="form-select">
+                                    <option value="">--- Pilih Dompet (Optional) ---</option>
+                                    <?php foreach($dompet as $d): ?>
+                                        <option value="<?= $d['id'] ?>"><?= $d['nama_dompet'] ?> - Rp <?= number_format($d['saldo'],0,'.','.') ?></option>
+                                    <?php endforeach ?>
+                                </select>
                             </div>
         
                             <div>
@@ -460,152 +527,143 @@
 </div>
 
 <script>
-        const incomeDataC = <?= json_encode($incomeCategories) ?>;
-        const expenseData = <?= json_encode($expenseCategories) ?>;
+    let baseUrl = window.location.origin
+    let chart1;
+    let chart2;
 
-        new Chart(document.getElementById('incomeChart'), {
-            type: 'pie',
-            data: {
-                labels: incomeDataC.map(d => d.kategori),
-                datasets: [{
-                    data: incomeDataC.map(d => d.total),
-                    // backgroundColor: ['#006ba6', '#0496ff', '#ffbc42', '#d81159','#8f2d56'],
-                    // borderColor: ['#006ba6', '#0496ff', '#ffbc42', '#d81159','#8f2d56']
-                    backgroundColor: [
-                        "rgba(255, 188, 66, .7)",
-                        "rgba(162, 210, 255, .7)", 
-                        "rgba(255, 200, 221, .7)", 
-                        "rgba(189, 224, 254, .7)",
-                        "rgba(255, 175, 204, .7)",
-                        // '#ffbc42',
-                        // '#a2d2ff',
-                        // '#ffc8dd', 
-                        // '#bde0fe',
-                        // '#ffafcc'
-                    ],
-                    borderColor: [
-                        '#ffbc42', 
-                        '#a2d2ff', 
-                        '#ffc8dd', 
-                        '#bde0fe',
-                        '#ffafcc'
-                    ]
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                        labels: {
-                            color: '#fafafa',
-                            font: {
-                                size: 14
-                            }
-                        }
-                    },
-                    // tooltip: {
-                    //     callbacks: {
-                    //         label: function(context) {
-                    //             const label = context.label || '';
-                    //             const value = context.raw || '';
-                    //             return label + ': ' + value + '%';
-                    //         }
-                    //     }
-                    // }
-                    tooltip: {
-                        enabled: true
-                    },
-                },
-                // onHover: (event, elements) => {
-                // if (elements.length) {
-                //     const index = elements[0].index;
-                //     centerText = `${data.datasets[0].data[index]}%`; // Menampilkan label dan nilai pada hover
-                // } else {
-                //     centerText = '100%'; // Default text
-                // }
-                //     myPieChart.update(); // Update chart untuk merender teks
-                // }
-            },
-        });
+    function fetchChartData(startdate = null, enddate = null){
+        $.ajax({
+            url: baseUrl+"/filter/chart/dash",
+            method: 'post',
+            data: {startdate:startdate, enddate:enddate},
+            dataType: 'json',
+            success: (data)=>{
 
-        new Chart(document.getElementById('expenseChart'), {
-            type: 'pie',
-            data: {
-                labels: expenseData.map(d => d.kategori),
-                datasets: [{
-                    data: expenseData.map(d => d.total),
-                    // backgroundColor: ['#f44336', '#e57373', '#ff5722'],
-                    // borderColor: ['#f44336', '#e57373', '#ff5722']
-                    // backgroundColor: ['#74b3ce', '#09bc8a', '#508991','#004346','#172a3a'],
-                    backgroundColor: [
-                        "rgba(9, 188, 138, 0.7)",
-                        "rgba(220, 53, 69, 0.7)",
-                        "rgba(33, 150, 243, 0.7)",
-                        "rgba(75, 192, 192, 0.7)",
-                        "rgba(255, 99, 132, 0.7)",
-                        // "rgba(76, 175, 80, 0.7)",
-                        // "rgba(244, 67, 54, 0.7)",
-                        // "#4CAF50",
-                        // "#F44336",
-                        // "#2196F3",
-                        // "#198754",
-                        // "#dc3545",
-                    ],
-                    borderColor: [
-                        "rgba(9, 188, 138, 1)",
-                        "rgba(220, 53, 69, 1)",
-                        "rgba(33, 150, 243,1)",
-                        "rgba(75, 199, 132, 1)",
-                        "rgba(255, 99, 132, 1)",
-                        // "rgba(76, 175, 80, 1)",
-                        // "rgba(244, 67, 54, 1)",
-                        // "#4CAF50",
-                        // "#F44336",
-                        // "#2196F3",
-                        // "#198754",
-                        // "#dc3545",
-                    ],
-                    // borderColor: ['#74b3ce', '#09bc8a', '#508991','#004346','#172a3a']
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                        labels: {
-                            color: '#fafafa',
-                            font: {
-                                size: 14
-                            }
-                        }
+                const incomeDataC = data.incomeCategories;
+                const expenseData = data.expenseCategories;
+                // const incomeDataC = <?php  //json_encode($incomeCategories) ?>;
+                // const expenseData = <?php // json_encode($expenseCategories) ?>;
+
+                if(chart1 && chart2){
+                    chart1.destroy()
+                    chart2.destroy()
+                }
+
+                chart1 = new Chart(document.getElementById('incomeChart'), {
+                    type: 'pie',
+                    data: {
+                        labels: incomeDataC.map(d => d.kategori),
+                        datasets: [{
+                            data: incomeDataC.map(d => d.total),
+                            // backgroundColor: ['#006ba6', '#0496ff', '#ffbc42', '#d81159','#8f2d56'],
+                            // borderColor: ['#006ba6', '#0496ff', '#ffbc42', '#d81159','#8f2d56']
+                            backgroundColor: [
+                                "rgba(255, 188, 66, .7)",
+                                "rgba(162, 210, 255, .7)", 
+                                "rgba(255, 200, 221, .7)", 
+                                "rgba(189, 224, 254, .7)",
+                                "rgba(255, 175, 204, .7)",
+                                // '#ffbc42',
+                                // '#a2d2ff',
+                                // '#ffc8dd', 
+                                // '#bde0fe',
+                                // '#ffafcc'
+                            ],
+                            borderColor: [
+                                '#ffbc42', 
+                                '#a2d2ff', 
+                                '#ffc8dd', 
+                                '#bde0fe',
+                                '#ffafcc'
+                            ]
+                        }]
                     },
-                    // tooltip: {
-                    //     callbacks: {
-                    //         label: function(context) {
-                    //             const label = context.label || '';
-                    //             const value = context.raw || '';
-                    //             return label + ': ' + value + '%';
-                    //         }
-                    //     }
-                    // }
-                    tooltip: {
-                        enabled: true
-                    }
-                },
-                // onHover: (event, elements) => {
-                // if (elements.length) {
-                //     const index = elements[0].index;
-                //     centerText = `${data.datasets[0].data[index]}%`; // Menampilkan label dan nilai pada hover
-                // } else {
-                //     centerText = '100%'; // Default text
-                // }
-                //     myPieChart.update(); // Update chart untuk merender teks
-                // }
-            },
-        });
-    </script>
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    color: '#fafafa',
+                                    font: {
+                                        size: 14
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                enabled: true
+                            },
+                        },
+                    },
+                });
+
+                chart2 = new Chart(document.getElementById('expenseChart'), {
+                    type: 'pie',
+                    data: {
+                        labels: expenseData.map(d => d.kategori),
+                        datasets: [{
+                            data: expenseData.map(d => d.total),
+                            // backgroundColor: ['#f44336', '#e57373', '#ff5722'],
+                            // borderColor: ['#f44336', '#e57373', '#ff5722']
+                            // backgroundColor: ['#74b3ce', '#09bc8a', '#508991','#004346','#172a3a'],
+                            backgroundColor: [
+                                "rgba(9, 188, 138, 0.7)",
+                                "rgba(220, 53, 69, 0.7)",
+                                "rgba(33, 150, 243, 0.7)",
+                                "rgba(75, 192, 192, 0.7)",
+                                "rgba(255, 99, 132, 0.7)",
+                                // "rgba(76, 175, 80, 0.7)",
+                                // "rgba(244, 67, 54, 0.7)",
+                                // "#4CAF50",
+                                // "#F44336",
+                                // "#2196F3",
+                                // "#198754",
+                                // "#dc3545",
+                            ],
+                            borderColor: [
+                                "rgba(9, 188, 138, 1)",
+                                "rgba(220, 53, 69, 1)",
+                                "rgba(33, 150, 243,1)",
+                                "rgba(75, 199, 132, 1)",
+                                "rgba(255, 99, 132, 1)",
+                                // "rgba(76, 175, 80, 1)",
+                                // "rgba(244, 67, 54, 1)",
+                                // "#4CAF50",
+                                // "#F44336",
+                                // "#2196F3",
+                                // "#198754",
+                                // "#dc3545",
+                            ],
+                            // borderColor: ['#74b3ce', '#09bc8a', '#508991','#004346','#172a3a']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    color: '#fafafa',
+                                    font: {
+                                        size: 14
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                enabled: true
+                            }
+                        },
+                    },
+                });
+
+            }
+        })
+    }
+
+fetchChartData();
+
+
+</script>
 
 <script>
     window.hapusTransaksi = (i,s)=>{
@@ -687,6 +745,31 @@
     })
 </script>
 
+<script>
+    document.getElementById('nominal-pengeluaran').addEventListener('input', function(){
+        let amount = parseFloat(this.value.split(".").join("")) || 0;
+        let dompetOptions = document.querySelectorAll('#dompet-expense option')
+
+        dompetOptions.forEach(option=>{
+            let saldo = parseFloat(option.getAttribute('data-saldo')) || 0;
+            if(saldo < amount && option.value !== ""){
+                option.disabled = true;
+            }else{
+                option.disabled = false;
+            }
+        })
+
+        // jika dompet yang dipilih tidak cukup saldo tampilkan warning
+        let selectedOption = document.querySelector('#dompet-expense option:checked')
+        let warning = document.getElementById('dompet-warning')
+        if(selectedOption && parseFloat(selectedOption.getAttribute('data-saldo')) < amount){
+            warning.classList.remove('d-none')
+        }else{
+            warning.classList.add('d-none')
+        }
+    })
+</script>
+
     <?php if(session()->getFlashdata('successLogin')): ?>
         <script>
                 Swal.fire({
@@ -698,6 +781,18 @@
                 });
         </script>
     <?php endif; ?>
+
+    <?php if(session()->getFlashdata('error')): ?>
+        <script>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    html: '<?= session()->getFlashdata('error'); ?> '+'Don\'t manipulate data!',
+                    showConfirmButton: true, // Tombol konfirmasi
+                    confirmButtonText: 'Oke' // Teks pada tombol
+                });
+        </script>
+    <?php endif ?>
 
     <script>
         $(document).ready(function(){
@@ -857,7 +952,6 @@
                     tooltip: {
                         callbacks: {
                             label: function(tooltipItem) {
-                                console.log(tooltipItem)
                                 return `${tooltipItem.dataset.label}: Rp${tooltipItem.formattedValue}`;
                             }
                         }
@@ -899,6 +993,56 @@
                 }
             }
         });
+    </script>
+
+    <!-- script pemanggilan filter -->
+    <script>
+        $(document).ready(function(){
+            $('.period').flatpickr()
+        })
+    </script>
+    <script>
+        // const baseUrl = window.location.origin
+        let startDate = document.getElementById('startDate');
+        let endDate = document.getElementById('endDate');
+        let filter = document.getElementById('selectFilter');
+        let incomecat = document.getElementById('incomeCategory');
+        let expensecat = document.getElementById('expenseCategory');
+        let kategori = document.getElementById('kategori');
+
+
+        $('#startDate, #endDate, #selectFilter, #kategori').on('change', function(){
+            $.ajax({
+                url: baseUrl+"/filter/dashboard",
+                method: 'POST',
+                data: {startdate: startDate.value, enddate:endDate.value, filter:filter.value, kategori:kategori.value},
+                dataType: 'html',
+                success: function(data){
+                    if(startDate.value && endDate.value && startDate.value > endDate.value){
+                        startDate.value = endDate.value
+                        // endDate.value = endDate.value
+                        return alert('tidak boleh melebihi end date! Tanggal akan di sesuaikan');
+                    }
+                    
+                    $('#alldata').html(data)
+                }
+            })
+
+            fetchChartData(startDate.value, endDate.value)
+        })
+
+        $('#reset').on('click', function(){
+            $.ajax({
+                url: baseUrl+"/filter/reset/dashboard",
+                method: 'post',
+                dataType: 'html',
+                success: function(data){
+                    $('#alldata').html(data)
+                }
+            })
+            fetchChartData()
+        })
+
     </script>
 
 <?= $this->endSection() ?>

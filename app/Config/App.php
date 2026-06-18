@@ -21,7 +21,8 @@ class App extends BaseConfig
         parent::__construct();
 
         // Deteksi IP address server secara otomatis
-        $ipAddress = gethostbyname(gethostname()) ?? 'localhost'; // Jika gagal, fallback ke 'localhost'
+        // $ipAddress = gethostbyname(gethostname()) ?? 'localhost'; // Jika gagal, fallback ke 'localhost'
+        $ipAddress = $_SERVER['HTTP_HOST'] ?? 'localhost'; // Jika gagal, fallback ke 'localhost'
 
         // Tentukan protokol (http atau https)
         $protocol = (!empty($_SERVER['SERVER_PROTOCOL']) && $_SERVER['SERVER_PROTOCOL'] !== 'off') ? "http" : "https";
@@ -30,11 +31,15 @@ class App extends BaseConfig
         // print_r($ipAddress);
         // print_r($protocol);
         // Tentukan baseURL secara dinamis
-        $this->baseURL = $protocol . '://' . $ipAddress . ':8080';
+        // $this->baseURL = $protocol . '://' . $ipAddress . ':8008';
+        // dd($_SERVER['SERVER_PROTOCOL']);
+        $this->baseURL = $protocol . '://'. $ipAddress;
         // print_r($this->baseURL);
     }
-    public string $baseURL = '';
-    // public string $baseURL = 'http://localhost:8080/';
+    public string $baseURL = 'https://moneyman.ifansz.my.id';
+    // public string $baseURL = 'https://moneyman.orenji.my.id';
+    // public string $baseURL = 'http://localhost:8008/';
+    // public string $baseURL = 'http://0.0.0.0:8008/';
 
     /**
      * Allowed Hostnames in the Site URL other than the hostname in the baseURL.

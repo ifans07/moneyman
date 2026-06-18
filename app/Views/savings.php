@@ -312,7 +312,7 @@
     let savedAmount = document.getElementById('savedAmount');
 
     targetAmount.addEventListener('keyup', function(e){
-       targetAmount.value = formatRupiah(this.value)
+        targetAmount.value = formatRupiah(this.value)
     })
 
     savedAmount.addEventListener('keyup', function(e){

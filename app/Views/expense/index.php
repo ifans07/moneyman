@@ -31,10 +31,15 @@
                     <div class="icon-box">
                         <i class="fa-solid fa-piggy-bank"></i>
                     </div>
-                    <h3>Expenses</h3>
+                    <div class="lh-1">
+                        <h2>Expenses</h2>
+                        <div style="margin-top:-3px">
+                            <small class="text-muted fs-6"><?= date('F') ?></small>
+                        </div>
+                    </div>
                 </div>
                 <div class="">
-                    <button class="btn icon-box" onclick="openExpenseModal()"><i class="fa-solid fa-plus"></i></button>
+                    <button class="btn icon-box shadow-custom" onclick="openExpenseModal()"><i class="fa-solid fa-plus"></i></button>
                 </div>
             </div>
 
@@ -50,7 +55,7 @@
                                 $no=1;
                                 for($i=0; $i<count($bulan); $i++):
                             ?>
-                                <div class="month-item" data-month="<?= $no++ ?>"><?= $bulan[$i] ?></div>
+                                <div class="month-item shadow-custom" data-month="<?= $no++ ?>"><?= $bulan[$i] ?></div>
                             <?php endfor; ?>
                         </div>
 
@@ -69,8 +74,20 @@
                         <label for="endDate" class="form-label">End Date:</label>
                         <input type="date" id="endDate" class="form-control" value="<?= date('Y-m-t') ?>">
                     </div>
-                    <div class="col-md-2 d-flex align-items-end">
+                    <!-- <div class="col-md-2 d-flex align-items-end">
                         <button class="btn btn-primary w-100 fw-medium" onclick="fetchExpenses()" disabled><i class="fa-solid fa-filter"></i> Filter</button>
+                    </div> -->
+                    <div class="col-md-2 d-flex align-items-end">
+                        <div class="input-group">
+                            <select name="" id="" class="form-control" style="border-right: none;">
+                                <option value="">Kategori</option>
+                                <option value="">Tertinggi</option>
+                                <option value="">Terendah</option>
+                                <option value="">expense</option>
+                                <option value="">income</option>
+                            </select>
+                            <span class="input-group-text bg-light" id="basic-addon1" style="border-left: none;"><i class="fa-solid fa-filter"></i></span>
+                        </div>
                     </div>
                 </div>
 
@@ -107,17 +124,22 @@
                 <!-- tombol grafik -->
                 <div class="my-3 btn-grafik d-flex justify-content-end">
                     <div class="">
-                        <button class="btn btn-primary" onClick="changeChartType('bar')" id="bar"><i class="fa-solid fa-chart-column"></i></button>
-                        <button class="btn btn-primary" onClick="changeChartType('pie')" id="pie"><i class="fa-solid fa-chart-pie"></i></button>
-                        <button class="btn btn-primary" onClick="changeChartType('doughnut')" id="doughnut"><i class="fa-regular fa-circle"></i></button>
-                        <button class="btn btn-primary" onClick="changeChartType('line')" id="line"><i class="fa-solid fa-chart-line"></i></button>
-                        <button class="btn btn-primary" id="minimize"><i class="fa-solid fa-window-minimize"></i></button>
+                        <button class="btn btn-primary shadow-custom" onClick="changeChartType('bar')" id="bar"><i class="fa-solid fa-chart-column"></i></button>
+                        <button class="btn btn-primary shadow-custom" onClick="changeChartType('line')" id="line"><i class="fa-solid fa-chart-line"></i></button>
+                        <button class="btn btn-primary shadow-custom" onClick="changeChartType('pie')" id="pie"><i class="fa-solid fa-chart-pie"></i></button>
+                        <button class="btn btn-primary shadow-custom" onClick="changeChartType('doughnut')" id="doughnut"><i class="fa-regular fa-circle"></i></button>
+                        <button class="btn btn-primary shadow-custom" id="minimize"><i class="fa-solid fa-window-minimize"></i></button>
                     </div>
                 </div>
 
                 <!-- Chart -->
-                <div class="mb-3 chart-container bg-light shadow-custom rounded-3 p-3">
-                    <canvas id="expensesChart" style="display: none"></canvas>
+                <div class="d-flex flex-md-row flex-column gap-2 mb-3">
+                    <div class="w-100 chart-container bg-light shadow-custom rounded-3 p-3">
+                        <canvas id="expensesChart" style="display: none"></canvas>
+                    </div>
+                    <div class="w-100 chart-container bg-light shadow-custom rounded-3 p-3">
+                        <canvas id="lineChart"></canvas>
+                    </div>
                 </div>
 
                 <div class="mb-3">
@@ -128,7 +150,10 @@
                 </div>
 
                 <div class="mb-3">
-                    <h5>Expenses List</h5>
+                    <div class="d-flex justify-content-between">
+                        <h5>Expenses List</h5>
+                        <span class="text-muted form-text">Jumlah transaksi: <span id="jml-data"></span></span>
+                    </div>
                     <div id="listExpenses" class="row g-2">
                         <div class="d-flex bg-light shadow-custom p-3 rounded-3" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="testing">
                             <div class="icon-box">
@@ -188,7 +213,7 @@
 
                     <div>
                         <label for="tanggl" class="form-label">Tanggal Keluar</label>
-                        <input type="date" class="form-select" id="tanggal-keluar">
+                        <input type="date" class="form-select" id="tanggal-keluar" value="<?= date('Y-m-d') ?>">
                     </div>
 
                     <div>
@@ -196,12 +221,23 @@
                         <input type="text" class="form-control" id="name">
                     </div>
 
-                    <div class="">
+                    <div class="mb-3">
                         <label for="cicilan" class="form-label">Jumlah</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fa-solid fa-rupiah-sign"></i></span>
-                            <input type="text" class="form-control" placeholder="0" aria-label="Username" aria-describedby="basic-addon1" id="nominal" value="">
+                            <input type="text" class="form-control" placeholder="0" aria-label="Username" aria-describedby="basic-addon1" id="nominal" value="" inputmode="numeric">
                         </div>
+                    </div>
+
+                    <div>
+                        <label for="dompet">Dompet (Optional)</label>
+                        <select name="dompet" id="dompet-expense" class="form-select">
+                            <option value="">--- Pilih Dompet (Optional) ----</option>
+                            <?php foreach($dompet as $d): ?>
+                                <option value="<?= $d['id'] ?>" data-saldo="<?= $d['saldo'] ?>"><?= $d['nama_dompet'] ?> - Rp <?= number_format($d['saldo'],0,'.','.') ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <small id="dompet-warning" class="text-danger form-text d-none">Saldo dompet tidak cukup!</small>
                     </div>
 
                     <div>
@@ -231,6 +267,35 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.getElementById('nominal').addEventListener('input', function(){
+        let amount = parseFloat(this.value.split(".").join("")) || 0;
+        let dompetOptions = document.querySelectorAll('#dompet-expense option')
+
+        dompetOptions.forEach(option=>{
+            let saldo = parseFloat(option.getAttribute('data-saldo')) || 0;
+            if(saldo < amount && option.value !== ""){
+                option.disabled = true;
+            }else{
+                option.disabled = false;
+            }
+        })
+
+        // jika dompet yang dipilih tidak cukup saldo tampilkan warning
+        let selectedOption = document.querySelector('#dompet-expense option:checked')
+        let warning = document.getElementById('dompet-warning')
+        if(selectedOption && parseFloat(selectedOption.getAttribute('data-saldo')) < amount){
+            warning.classList.remove('d-none')
+        }else{
+            warning.classList.add('d-none')
+        }
+    })
+    document.getElementById('dompet-expense').addEventListener('change', function(){
+        let warning = document.getElementById('dompet-warning')
+        warning.classList.add('d-none')
+    })
+</script>
 
 <script>
     window.testing = ()=>{
@@ -349,7 +414,7 @@
                                 <div class="lh-1">
                                     <h6>${expense.name_expenses}</h6>
                                     <small class="text-muted">${expense.description}</small><br>
-                                    <small class="text-muted">Tanggal: <span class="fw-semibold">${tanggal}</span></small>
+                                    <small class="text-muted">${(expense.id_dompet != 0)?expense.nama_dompet:"Optional"}: <span class="fw-semibold">${tanggal}</span></small>
                                 </div>
                                 <div class="">
                                     <span class="fw-medium fs-5 text-danger">Rp${formatRupiah(expense.amount)}</span>
@@ -359,6 +424,7 @@
                     `
                 })
                 $('#listExpenses').html(html)
+                $('#jml-data').html(data.length)
                 // $('[data-bs-toggle="tooltip"]').tooltip();
                 // Initialize tooltip
                 const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
@@ -439,6 +505,7 @@
     }
 
     $(document).ready(function(){
+
         $('#addExpenseForm').on('submit', function(e){
             e.preventDefault();
             let angka = $('#nominal').val()
@@ -451,6 +518,7 @@
                     tanggal: $('#tanggal-keluar').val(),
                     name: $('#name').val(),
                     jumlah: nominal,
+                    dompet: $('#dompet-expense').val(),
                     kategori: $('#kategori').val(),
                     catatan: $('#catatan').val(),
                 },
@@ -482,6 +550,15 @@
                             console.log("I was closed by the timer");
                             location.reload()
                         }
+                    });
+                },
+                error: function(xhr){
+                    let errorMessage = xhr.responseJSON?.message || 'Terjadi kesalahan.'; 
+                    // Tampilkan pesan error ke user
+                    Swal.fire({
+                        title: "Oops...",
+                        text: errorMessage,
+                        icon: "error"
                     });
                 }
             })
@@ -529,7 +606,7 @@
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Pengeluaran (Rp)',
+                    label: 'Pengeluaran Per Kategori (Rp)',
                     data: values,
                     backgroundColor: [
                         'rgba(75, 192, 192, 0.2)',
@@ -545,7 +622,7 @@
                         'rgba(153, 102, 255, 1)',
                         'rgba(255, 99, 132, 1)'
                     ],
-                    borderWidth: 1
+                    borderWidth: 2
                 }]
             },
             options: {
@@ -718,7 +795,7 @@ fetchComparisonData()
     })
 </script>
 <script>
-        const monthCarousel = document.getElementById('monthCarousel');
+    const monthCarousel = document.getElementById('monthCarousel');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
     const monthItems = document.querySelectorAll('.month-item');
@@ -742,7 +819,7 @@ fetchComparisonData()
             if (monthValue === month) {
                 item.classList.add('active');
                 // Scroll to the active month
-                item.scrollIntoView({ inline: 'center', behavior: 'smooth' });
+                // item.scrollIntoView({ inline: 'center', behavior: 'smooth' });
             } else {
                 item.classList.remove('active');
             }
@@ -783,6 +860,71 @@ fetchComparisonData()
             // setTanggal("bulan", tanggalAwal, tanggalAkhirFormatted)
         });
     });
+</script>
+
+<script>
+    $.ajax({
+        url: "<?= base_url('/api/trendsdataexpense') ?>",
+        method: 'GET',
+        dataType: 'JSON',
+        success: function(data){
+            trendsChartExpense(data.nilai, data.nama)
+        }
+    })
+    const trendsChartExpense = (value, label)=>{
+        const ctx = document.getElementById('lineChart').getContext('2d');
+        const lineChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            // labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul'],
+            labels: label,
+            datasets: [{
+            label: 'Trends Pengeluaran Bulanan',
+            // data: [1200000, 1000000, 1250000, 900000, 1500000, 1300000, 1100000],
+            data: value,
+            // backgroundColor: 'rgba(59, 130, 246, 0.2)',
+            // borderColor: 'rgba(59, 130, 246, 1)',
+            backgroundColor: 'rgba(247, 55, 79,0.2)',
+            borderColor: 'rgba(247, 55, 79,1)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.4,
+            // pointBackgroundColor: '#3B82F6',
+            pointBackgroundColor: '#F7374F',
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+            legend: {
+                position: 'top',
+                labels: {
+                font: {
+                    size: 14
+                }
+                }
+            },
+            tooltip: {
+                callbacks: {
+                label: function(context) {
+                    return 'Rp ' + context.formattedValue;
+                }
+                }
+            }
+            },
+            scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                callback: function(value) {
+                    return 'Rp ' + value.toLocaleString();
+                }
+                }
+            }
+            }
+        }
+        });
+    }
 </script>
 
 <?= $this->endSection() ?>

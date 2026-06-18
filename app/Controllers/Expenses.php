@@ -7,16 +7,18 @@ use App\Controllers\BaseController;
 use CodeIgniter\HTTP\ResponseInterface;
 use App\Models\KategoriExpensesModel;
 use App\Models\ExpensesModel;
+use App\Models\DompetModel;
 
 class Expenses extends BaseController
 {
     use ResponseTrait;
 
-    protected $kategori_expense, $expenses;
+    protected $kategori_expense, $expenses, $dompet;
     public function __construct()
     {
         $this->kategori_expense = new KategoriExpensesModel();
         $this->expenses = new ExpensesModel();
+        $this->dompet = new DompetModel();
     }
 
     public function index()
@@ -25,7 +27,8 @@ class Expenses extends BaseController
             'title' => 'Expenses',
             'deskripsi' => "Kelola dan pantau semua pengeluaran Anda dengan mudah, lengkap dengan detail kategori dan periode.",
             'kategori_expense' => $this->kategori_expense->orderBy("CASE WHEN kategori = 'Lain-lain' THEN 1 ELSE 0 END", 'ASC')->orderBy('kategori', 'ASC')->findAll(),
-            'expenses' => $this->expenses->join('kategori_expenses', 'kategori_expenses.id=expenses.id_kategori_expenses')->where('date_expenses', date('Y-m'))->where('id_user', session()->get('id'))->findAll()
+            'expenses' => $this->expenses->join('kategori_expenses', 'kategori_expenses.id=expenses.id_kategori_expenses')->where('date_expenses', date('Y-m'))->where('id_user', session()->get('id'))->findAll(),
+            'dompet' => $this->dompet->userDompet()
         ];
         return view('expense/index', $data);
     }
@@ -45,15 +48,29 @@ class Expenses extends BaseController
             'id_kategori_expenses' => $this->request->getPost('kategori'),
             'name_expenses' => $this->request->getPost('name'),
             'amount' => $this->request->getPost('jumlah'),
+            'id_dompet' => $this->request->getPost('dompet'),
             'description' => $this->request->getPost('catatan'),
             'date_expenses' => $this->request->getPost('tanggal'),
             'slug' => $this->generateSlug($this->request->getPost('name')),
             'id_user' => session()->get('id')
         ];
 
+        // return $this->respond($data);
+        if(!empty($data['id_dompet'])){
+            $dompet = $this->dompet->find($data['id_dompet']);
+            if($dompet && $dompet['saldo'] >= $data['amount']){
+                $this->dompet->updateSaldo($data['id_dompet'], $data['amount'], 'expense');
+            }else{
+                return $this->response->setJSON([
+                    'message' => throw new \Exception("Saldo dompet tidak mencukupi untuk transaksi ini! Don't manipulate data")
+                ]);
+            }
+        }
         $this->expenses->save($data);
         return $this->respondCreated($data);
-        // return $this->respond($data);
+        // return $this->response->setJSON([
+        //     'id_dompet' => $data['id_dompet']
+        // ]);
     }
 
     // api expenses
@@ -125,7 +142,8 @@ class Expenses extends BaseController
     {
         // Hitung bulan sekarang dan bulan lalu
         $currentMonth = date('Y-m');
-        $lastMonth = date('Y-m', strtotime('-1 month'));
+        // $lastMonth = date('Y-m', strtotime('-1 month'));
+        $lastMonth = date('Y-m', strtotime('first day of previous month'));
 
         // Ambil total pengeluaran bulan ini dan bulan lalu menggunakan model
         $currentMonthTotal = $this->expenses->getTotalByMonth($currentMonth);
@@ -135,6 +153,8 @@ class Expenses extends BaseController
         return $this->response->setJSON([
             'currentMonth' => (float) $currentMonthTotal,
             'lastMonth' => (float) $lastMonthTotal,
+            'liatLastMonth' => $lastMonth,
+            'liatCurrentMonth' => $currentMonth
         ]);
     }
 
@@ -150,6 +170,15 @@ class Expenses extends BaseController
         return $this->response->setJSON([
             'data' => $data['created_at'],
             'slug' => $slug
+        ]);
+    }
+
+    // data untuk grafik trends pengeluaran
+    public function trendsExpense(){
+        $data = $this->expenses->getDataExpense();
+        return $this->response->setJSON([
+            'nama' => array_column($data, 'bulan_tahun'),
+            'nilai' => array_column($data, 'total')
         ]);
     }
 }

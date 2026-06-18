@@ -207,6 +207,7 @@
 
 /* Tabel di ponsel */
 @media (max-width: 575.98px) {
+
   .table-responsive {
     border: 0;
   }
@@ -238,6 +239,7 @@
     /* overflow: hidden; */
   }
   .tmb-trx {
+    display: none;
     position: fixed;
     background-color: #bad6ca !important;
     bottom: 20px;
@@ -291,21 +293,6 @@
     transition: bottom .3s;
   }
 
-  .bungkus{
-    /* background: transparent; */
-    backdrop-filter: blur(0);   
-}
-/* .bungkus::before{
-    content: "";
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: transparent;
-    bottom: 0;
-    right: 0;
-    border-radius: 1rem;
-    pointer-events: none;
-} */
 }
 
 /* @media (min-width: 1200px) {

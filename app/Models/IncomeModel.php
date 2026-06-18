@@ -12,7 +12,7 @@ class IncomeModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = true;
     protected $protectFields    = true;
-    protected $allowedFields    = ['id_user', 'id_kategori_income', 'name_income', 'amount', 'description', 'date_income', 'status', 'slug'];
+    protected $allowedFields    = ['id_user', 'id_dompet', 'id_kategori_income', 'name_income', 'amount', 'description', 'date_income', 'status', 'slug'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
@@ -46,13 +46,14 @@ class IncomeModel extends Model
 
     public function getIncome($dari='Y-m-01', $sampai='Y-m-t')
     {
-        return $this->select('id_user, id_kategori_income, kategori, icon, name_income, amount, description, date_income, status, income.slug')
+        return $this->select('income.id_user, id_dompet, nama_dompet, id_kategori_income, kategori, icon, name_income, amount, income.description, date_income, income.status, income.slug')
         ->join('kategori_income', 'kategori_income.id=income.id_kategori_income')
+        ->join('dompet', 'dompet.id=income.id_dompet', 'left')
         // ->where('DATE_FORMAT(date_income, "%Y-%m")', date('Y-m'))
-        ->where('date_income >=', date($dari))
-        ->where('date_income <=', date($sampai))
-        ->where('id_user', session()->get('id'))
-        ->orderBy('date_income', 'DESC')
+        ->where('income.date_income >=', date($dari))
+        ->where('income.date_income <=', date($sampai))
+        ->where('income.id_user', session()->get('id'))
+        ->orderBy('income.date_income', 'DESC')
         ->findAll();
     }
 
@@ -124,34 +125,102 @@ class IncomeModel extends Model
         return $this->selectSum('amount')->where('DATE_FORMAT(date_income, "%Y")', date('Y'))->where('id_user', session()->get('id'))->first();
     }
 
-    public function getIncomeData()
+    public function getIncomeData($startdate=null, $enddate=null, $filter = null, $kategori = null)
     {
-        return $this->db->table('income')
-        ->select('id_kategori_income as id_kategori, kategori, icon, name_income as name, amount, description, date_income as tanggal, 1 as status, income.slug as slug')
+        $query = $this->db->table('income')
+        ->select('id_kategori_income as id_kategori, kategori, icon, id_dompet, nama_dompet, name_income as name, amount, description, date_income as tanggal, income.status, income.slug as slug')
         ->join('kategori_income', 'kategori_income.id=income.id_kategori_income')
-        ->where('id_user', session()->get('id'))
+        ->join('dompet', 'dompet.id=income.id_dompet', 'left')
+        ->where('income.id_user', session()->get('id'));
+
+        if($startdate && $enddate){
+            $query
+            ->where('date_income >=', date($startdate))
+            ->where('date_income <=', date($enddate));
+        }
+
+        // Filter tambahan dari select option
+        if ($filter) {
+            switch ($filter) {
+                case 'expense':
+                    $query->where('income.status', '0');
+                    break;
+                case 'income':
+                    $query->where('income.status', '1');
+                    break;
+            }
+        }
+
+        // kategori
+        if($kategori){
+            // $query->where('id_kategori_income', $kategori);
+            $bedahkategori = explode(',', $kategori);
+            if(count($bedahkategori) == 2){
+                $id = $bedahkategori[0];
+                $nama = $bedahkategori[1];
+                $query
+                ->where('id_kategori_income', $id)
+                ->where('kategori', $nama);
+            }
+        }
+
+        return $query
         ->where('income.deleted_at', null)
         ->orderBy('tanggal', 'DESC')
         ->get()
         ->getResultArray();
     }
 
-    public function getExpensesData()
+    public function getExpensesData($startdate=null, $enddate=null, $filter = null, $kategori = null)
     {
-        return $this->db->table('expenses')
-        ->select('id_kategori_expenses as id_kategori, kategori, icon, name_expenses as name, amount, description, date_expenses as tanggal, 0 as status, expenses.slug as slug')
+        $query = $this->db->table('expenses')
+        ->select('id_kategori_expenses as id_kategori, kategori, icon, id_dompet, nama_dompet, name_expenses as name, amount, description, date_expenses as tanggal, expenses.status, expenses.slug as slug')
         ->join('kategori_expenses', 'kategori_expenses.id=expenses.id_kategori_expenses')
-        ->where('id_user', session()->get('id'))
+        ->join('dompet', 'dompet.id=expenses.id_dompet', 'left')
+        ->where('expenses.id_user', session()->get('id'));
+
+        if($startdate && $enddate){
+            $query
+            ->where('date_expenses >=', date($startdate))
+            ->where('date_expenses <=', date($enddate));
+        }
+
+        // Filter tambahan dari select option
+        if ($filter) {
+            switch ($filter) {
+                case 'expense':
+                    $query->where('expenses.status', '0');
+                    break;
+                case 'income':
+                    $query->where('expenses.status', '1');
+                    break;
+            }
+        }
+
+        // kategori
+        if($kategori){
+            // $query->where('id_kategori_expenses', $kategori);
+            $bedahkategori = explode(',', $kategori);
+            if(count($bedahkategori) == 2){
+                $id = $bedahkategori[0];
+                $nama = $bedahkategori[1];
+                $query
+                ->where('id_kategori_expenses', $id)
+                ->where('kategori', $nama);
+            }
+        }
+        
+        return $query
         ->where('expenses.deleted_at', null)
         ->orderBy('tanggal', 'DESC')
         ->get()
         ->getResultArray();
     }
 
-    public function gabungData()
+    public function gabungData($startdate = null, $enddate = null, $filter = null, $kategori = null)
     {
-        $dataA = $this->getIncomeData();
-        $dataB = $this->getExpensesData();
+        $dataA = $this->getIncomeData($startdate, $enddate, $filter, $kategori);
+        $dataB = $this->getExpensesData($startdate, $enddate, $filter, $kategori);
 
         // Menggabungkan hasil dari dua query
         $combinedData = array_merge($dataA, $dataB);
@@ -183,36 +252,94 @@ class IncomeModel extends Model
             ->getResultArray();
     }
 
-    public function topKategoriIncome()
+    public function topKategoriIncome($startdate = null, $enddate = null, $filter = null, $kategori = null)
     {
-        return $this->db->table('income')
+        $query = $this->db->table('income')
         ->select('id_kategori_income, name_income, kategori, SUM(amount) as total_income, date_income, 1 as status')
         ->join('kategori_income','kategori_income.id=income.id_kategori_income')
         ->groupBy('kategori_income.kategori')
-        ->orderBy('total_income', 'DESC')
-        ->where('id_user', session()->get('id'))
+        ->where('id_user', session()->get('id'));
+
+        if($startdate && $enddate){
+            $query
+            ->where('date_income >=', date($startdate))
+            ->where('date_income <=', date($enddate));
+        }
+        if($filter){
+            switch($filter){
+                case 'expense':
+                    $query->where('status', '0');
+                    break;
+                case 'income':
+                    $query->where('status', '1');
+                    break;
+            }
+        }
+        if($kategori){
+            $bedahkategori = explode(',',$kategori);
+            if(count($bedahkategori) == 2){
+                $id = $bedahkategori[0];
+                $nama = $bedahkategori[1];
+
+                $query
+                ->where('id_kategori_income', $id)
+                ->where('kategori', $nama);
+            }
+        }
+        
+        return $query
         ->where('income.deleted_at', null)
+        ->orderBy('total_income', 'DESC')
         ->get()
         ->getResultArray();
     }
     
-    public function topKategoriExpenses()
+    public function topKategoriExpenses($startdate = null, $enddate = null, $filter = null, $kategori = null)
     {
-        return $this->db->table('expenses')
+        $query = $this->db->table('expenses')
         ->select('id_kategori_expenses, name_expenses, kategori, SUM(amount) as total_expenses, date_expenses, 0 as status')
         ->join('kategori_expenses','kategori_expenses.id=expenses.id_kategori_expenses')
         ->groupBy('kategori_expenses.kategori')
-        ->orderBy('total_expenses', 'DESC')
-        ->where('id_user', session()->get('id'))
+        ->where('id_user', session()->get('id'));
+
+        if($startdate && $enddate){
+            $query
+            ->where('date_expenses >=', date($startdate))
+            ->where('date_expenses <=', date($enddate));
+        }
+        if($filter){
+            switch($filter){
+                case 'expense':
+                    $query->where('status', '0');
+                    break;
+                case 'income':
+                    $query->where('status', '1');
+                    break;
+            }
+        }
+        if($kategori){
+            $bedahkategori = explode(',',$kategori);
+            if(count($bedahkategori) == 2){
+                $id = $bedahkategori[0];
+                $nama = $bedahkategori[1];
+
+                $query
+                ->where('id_kategori_expenses', $id)
+                ->where('kategori', $nama);
+            }
+        }
+        
+        return $query
         ->where('expenses.deleted_at', null)
+        ->orderBy('total_expenses', 'DESC')
         ->get()
         ->getResultArray();
     }
 
-    public function gabungDataKategori()
+    public function gabungDataKategori($startdate = null, $enddate = null, $filter = null, $kategori = null)
     {
-        $dataA = $this->topKategoriIncome();
-        $dataB = $this->topKategoriExpenses();
+        $dataA = $this->topKategoriIncome($startdate, $enddate, $filter, $kategori);
+        $dataB = $this->topKategoriExpenses($startdate, $enddate, $filter, $kategori);
 
         // Menggabungkan hasil dari dua query
         $combinedData = array_merge($dataA, $dataB);
@@ -270,16 +397,65 @@ class IncomeModel extends Model
             ->getRow()->amount;
     }
 
-    public function getIncomeByCategory($userId)
+    public function getIncomeByCategory($startdate = null, $enddate = null)
     {
-        return $this->db->table('income')
-            ->select('kategori, SUM(amount) as total')
+        $query = $this->db->table('income')
+            ->select('kategori, SUM(amount) as total, income.date_income')
             ->join('kategori_income', 'kategori_income.id = income.id_kategori_income')
-            ->where('id_user', $userId)
-            ->where('income.deleted_at', null)
-            ->groupBy('kategori')
-            ->get()
-            ->getResultArray();
+            ->where('id_user', session()->get('id'));
+        
+        if($startdate && $enddate){
+            $query
+            ->where('income.date_income >=', date($startdate))
+            ->where('income.date_income <=', date($enddate));
+        }
+        
+        return $query
+                ->where('income.deleted_at', null)
+                ->groupBy('kategori')
+                ->get()
+                ->getResultArray();
     }
 
+    public function getChartIncome($startdate = null, $enddate = null)
+    {
+        $query = $this->db->table('income')
+        ->select('kategori, amount, date_income')
+        ->join('kategori_income', 'kategori_income.id = income.id_kategori_income')
+        ->where('id_user', session()->get('id'));
+
+        if($startdate && $enddate){
+            $query->where('income.date_income >=', date($startdate))
+            ->where('income.date_income <=', date($enddate));
+        }
+
+        return $query
+        ->where('income.deleted_at', null)
+        ->get()
+        ->getResultArray();
+    }
+
+    // dompet klasifikasi
+    public function dompetTotalIncome($idDompet)
+    {
+        return $this->db->table($this->table)
+        ->selectSum('amount')
+        ->join('dompet', 'dompet.id=income.id_dompet')
+        ->where('id_dompet', $idDompet)
+        ->where('income.deleted_at', null)
+        ->get()
+        ->getRow()->amount;
+    }
+
+    // data untuk grafik trends pemasukan
+    public function getDataIncome()
+    {
+        $builder = $this->db->table($this->table);
+        $builder->select("DATE_FORMAT(date_income, '%b %Y') AS bulan_tahun, SUM(amount) AS total");
+        $builder->where('id_user', session()->get('id'));
+        $builder->where('deleted_at', null);
+        $builder->groupBy("YEAR(date_income), MONTH(date_income)");
+        $builder->orderBy("YEAR(date_income), MONTH(date_income)");
+        return $builder->get()->getResultArray();
+    }
 }

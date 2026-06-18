@@ -8,16 +8,18 @@ use CodeIgniter\HTTP\ResponseInterface;
 use Codeigniter\API\ResponseTrait;
 use App\Models\KategoriIncomeModel;
 use App\Models\IncomeModel;
+use App\Models\DompetModel;
 
 class Income extends BaseController
 {
     use ResponseTrait;
 
-    protected $income, $kategori_income;
+    protected $income, $kategori_income, $dompet;
     public function __construct()
     {
         $this->income = new IncomeModel();
         $this->kategori_income = new KategoriIncomeModel();
+        $this->dompet = new DompetModel();
     }
 
     public function index()
@@ -26,7 +28,8 @@ class Income extends BaseController
             'title' => 'Income',
             'deskripsi' => "Catat semua sumber pemasukan Anda untuk memantau keuangan dan menganalisis pertumbuhan tabungan.",
             'kategori_income' => $this->kategori_income->orderBy("CASE WHEN kategori = 'Lain-lain' THEN 1 ELSE 0 END", 'ASC')->orderBy('kategori', 'ASC')->findAll(),
-            'income' => $this->income->join('kategori_income', 'kategori_income.id=income.id_kategori_income')->where('date_income', date('Y-m'))->where('id_user',session()->get('id'))->findAll()
+            'income' => $this->income->join('kategori_income', 'kategori_income.id=income.id_kategori_income')->join('dompet', 'dompet.id=income.id_dompet', 'left')->where('date_income', date('Y-m'))->where('income.id_user',session()->get('id'))->findAll(),
+            'dompet' => $this->dompet->userDompet()
         ];
         return view('income/index', $data);
     }
@@ -46,6 +49,7 @@ class Income extends BaseController
             'id_kategori_income' => $this->request->getPost('kategori'),
             'name_income' => $this->request->getPost('name'),
             'amount' => $this->request->getPost('jumlah'),
+            'id_dompet' => $this->request->getPost('dompet'),
             'description' => $this->request->getPost('catatan'),
             'date_income' => $this->request->getPost('tanggal'),
             'slug' => $this->generateSlug($this->request->getPost('name')),
@@ -53,6 +57,9 @@ class Income extends BaseController
         ];
 
         $this->income->save($data);
+        if(!empty($data['id_dompet'])){
+            $this->dompet->updateSaldo($data['id_dompet'], $data['amount'], 'income');
+        }
         return $this->respondCreated($data);
         // return $this->respond($data);
     }
@@ -114,11 +121,11 @@ class Income extends BaseController
     {
         $percentage = number_format($percentage,2);
         if ($percentage > 30) {
-            return "Pemasukan pada kategori <span class='fw-bold'>$category</span> cukup besar. Pertimbangkan untuk mengurangi agar lebih hemat (<span class='text-success'>$percentage%</span>).";
+            return "Pemasukan pada kategori <span class='fw-bold'>$category</span> cukup besar. Pertimbangkan uang tersebut untuk membeli aset riil (<span class='text-success'>$percentage%</span>).";
         } elseif ($percentage > 20) {
-            return "Pemasukan kategori <span class='fw-bold'>$category</span> bisa sedikit dikurangi untuk meningkatkan tabungan ($percentage%).";
+            return "Pemasukan kategori <span class='fw-bold'>$category</span> bisa menambahkan pemasukan dari hal lain (cari pasif income) ($percentage%).";
         } else {
-            return "Pemasukan kategori <span class='fw-bold'>$category</span> masih dalam batas wajar ($percentage%).";
+            return "Pemasukan kategori <span class='fw-bold'>$category</span> alhamdulillah (syukuri) ($percentage%).";
         }
     }
 
@@ -126,7 +133,8 @@ class Income extends BaseController
     {
         // Hitung bulan sekarang dan bulan lalu
         $currentMonth = date('Y-m');
-        $lastMonth = date('Y-m', strtotime('-1 month'));
+        // $lastMonth = date('Y-m', strtotime('-1 month'));
+        $lastMonth = date('Y-m', strtotime('first day of previous month'));
 
         // Ambil total pemasukan bulan ini dan bulan lalu menggunakan model
         $currentMonthTotal = $this->income->getTotalByMonth($currentMonth);
@@ -150,6 +158,16 @@ class Income extends BaseController
         return $this->response->setJSON([
             'data' => $data['created_at'],
             'slug' => $slug
+        ]);
+    }
+
+    // trends income data
+    public function trendsIncome()
+    {
+        $data = $this->income->getDataIncome();
+        return $this->response->setJSON([
+            'nama' => array_column($data, 'bulan_tahun'),
+            'nilai' => array_column($data, 'total')
         ]);
     }
 }

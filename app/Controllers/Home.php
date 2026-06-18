@@ -7,12 +7,13 @@ use App\Models\KategoriExpensesModel;
 use App\Models\SavingsModel;
 use App\Models\ExpensesModel;
 use App\Models\IncomeModel;
+use App\Models\DompetModel;
 
 class Home extends BaseController
 {
     use ResponseTrait;
 
-    protected $kategori_income, $kategori_expense, $savings, $expenses, $income;
+    protected $kategori_income, $kategori_expense, $savings, $expenses, $income, $dompet;
 
     public function __construct()
     {
@@ -21,6 +22,7 @@ class Home extends BaseController
         $this->savings = new SavingsModel();
         $this->expenses = new ExpensesModel();
         $this->income = new IncomeModel();
+        $this->dompet = new DompetModel();
     }
 
     private function getAllMonths()
@@ -41,6 +43,7 @@ class Home extends BaseController
 
     public function index(): string
     {
+        // $income = $this->income->getIncomeData();
         $keluar = $this->expenses->getMonthlyExpenses();
         $masuk = $this->income->getMonthlyIncome();
         // $dataExpenses = array_map(fn($row) => $row['total_expenses'], $keluar);
@@ -65,6 +68,7 @@ class Home extends BaseController
 
         $allData = $this->income->gabungData();
         $incomeExpense = $this->income->gabungData();
+        $jmlTrx = count($incomeExpense);
 
         // $totalTransaksi = $this->income->gabungData();
         $totalAmount = array_reduce($allData, function ($carry, $item) {
@@ -78,7 +82,7 @@ class Home extends BaseController
             return strtotime($b['tanggal']) - strtotime($a['tanggal']);
         });
 
-        $perPage = 10;
+        $perPage = 16;
         $perPageA = 8;
         
         // pagination A
@@ -133,16 +137,9 @@ class Home extends BaseController
         }
 
         // Data kategori pemasukan dan pengeluaran
-        $incomeCategories = $this->income->getIncomeByCategory(session()->get('id'));
-        $expenseCategories = $this->expenses->getExpenseByCategory(session()->get('id'));
+        $incomeCategories = $this->income->getIncomeByCategory();
+        $expenseCategories = $this->expenses->getExpenseByCategory();
 
-        // d(date('Y-m-d'));
-        // d($allMonths);
-        // d($labels);
-        // d($incomeValues);
-        // d($incomeArray);
-        // d($expenseArray);
-        // dd($expenseValues);
         
         $data = [
             'title' => 'Dashboard',
@@ -183,7 +180,12 @@ class Home extends BaseController
             ],
             'totalAmount' => $totalAmount,
             'incomeCategories' => $incomeCategories,
-            'expenseCategories' => $expenseCategories
+            'expenseCategories' => $expenseCategories,
+            // 'incomeCategories' => $this->response->setJSON($incomeCategories),
+            // 'expenseCategories' => $this->response->setJSON($expenseCategories),
+            'jmltrx' => $jmlTrx,
+            'dompet' => $this->dompet->userDompet()
+
         ];
         // dd($data);
         return view('dashboard', $data);
@@ -357,6 +359,7 @@ class Home extends BaseController
                 'id_kategori_expenses' => $this->request->getPost('kategori-pengeluaran'),
                 'name_expenses' => $this->request->getPost('nama-pengeluaran'),
                 'amount' => $nominal,
+                'id_dompet' => $this->request->getPost('dompet'),
                 'description' => $this->request->getPost('catatan-pengeluaran'),
                 'date_expenses' => $this->request->getPost('tanggal-keluar'),
                 'status' => 0,
@@ -364,6 +367,16 @@ class Home extends BaseController
                 'id_user' => session()->get('id')
             ];
             // dd($data);
+            if(!empty($data['id_dompet'])){
+                $dompet = $this->dompet->find($data['id_dompet']);
+                if($dompet && $dompet['saldo'] >= $data['amount']){
+                    $this->dompet->updateSaldo($data['id_dompet'], $data['amount'], 'expense');
+                }else{
+                    session()->setFlashdata('error', 'Saldo dompet tidak mencukupi untuk transaksi ini! Data tidak disimpan tolong ulangi transaksi.');
+                    return redirect()->to(base_url('/beranda'));
+                    // throw new \Exception("saldo dompet tidak mencukupi untuk transaksi ini!");
+                }
+            }
             $this->expenses->save($data);
         }
         if(isset($_POST['save-pemasukan'])){
@@ -371,6 +384,7 @@ class Home extends BaseController
                 'id_kategori_income' => $this->request->getPost('kategori-pemasukan'),
                 'name_income' => $this->request->getPost('nama-pemasukan'),
                 'amount' => $nominal,
+                'id_dompet' => $this->request->getPost('dompet'),
                 'description' => $this->request->getPost('catatan-pemasukan'),
                 'date_income' => $this->request->getPost('tanggal-masuk'),
                 'status' => 1,
@@ -379,6 +393,9 @@ class Home extends BaseController
             ];
             // dd($data);
             $this->income->save($data);
+            if(!empty($data['id_dompet'])){
+                $this->dompet->updateSaldo($data['id_dompet'], $data['amount'], 'income');
+            }
         }
 
         return redirect()->to(base_url('/beranda'));

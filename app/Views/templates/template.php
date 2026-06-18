@@ -4,18 +4,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $title ?></title>
     <meta name="description" content="The small framework with powerful features">
-
     <link rel="shortcut icon" type="image/png" href="<?= base_url('/icons/icons8-coin-wallet.png') ?>">
+    
+    <title><?= $title ?></title>
+
+    
+    <!-- font roboto & lato -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet" as="font" type="font/woff2" crossorigin="anonymous">
+    
+    
     <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-    <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="<?= base_url('/css/responsive.css') ?>">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    
     <!-- jquery -->
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@6.1.10/index.global.min.js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
     <script src="<?= base_url('node_modules/jquery/dist/jquery.min.js') ?>"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
@@ -24,34 +31,31 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <!-- fullcalender -->
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.4/main.min.css" rel="stylesheet">
-
     <style>
         /* Gaya untuk track (background) scrollbar */
-::-webkit-scrollbar {
-    width: 8px; /* Lebar scrollbar */
-}
+        ::-webkit-scrollbar {
+            width: 8px; /* Lebar scrollbar */
+        }
 
-::-webkit-scrollbar-track {
-    background: #f1f1f1; /* Warna background track */
-    border-radius: 5px; /* Membuat track lebih rounded */
-}
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; /* Warna background track */
+            border-radius: 5px; /* Membuat track lebih rounded */
+        }
 
-/* Gaya untuk handle atau thumb scrollbar */
-::-webkit-scrollbar-thumb {
-    background: #888; /* Warna handle scrollbar */
-    border-radius: 5px; /* Membuat handle lebih rounded */
-}
+        /* Gaya untuk handle atau thumb scrollbar */
+        ::-webkit-scrollbar-thumb {
+            background: #888; /* Warna handle scrollbar */
+            border-radius: 5px; /* Membuat handle lebih rounded */
+        }
 
-/* Gaya untuk handle scrollbar saat di-hover */
-::-webkit-scrollbar-thumb:hover {
-    background: #555; /* Warna handle saat di-hover */
-}
+        /* Gaya untuk handle scrollbar saat di-hover */
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555; /* Warna handle saat di-hover */
+        }
 
-/* Mengganti warna border dan teks pada btn-outline-primary */
-/* Mengganti warna border dan teks pada btn-outline-primary */
-.btn-outline-primary {
+        /* Mengganti warna border dan teks pada btn-outline-primary */
+        /* Mengganti warna border dan teks pada btn-outline-primary */
+        .btn-outline-primary {
             color: #384c57;
             border-color: #384c57;
         }
@@ -159,20 +163,6 @@
             right: -40px;
         }
 
-        /* .chart-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        #expensesChart {
-            max-width: 600px;  
-            max-height: 300px; 
-            width: 100%;      
-            height: auto;     
-            margin: 0 auto;
-        } */
-
         .grp-hapus{
             position: absolute;
             bottom: 0px;
@@ -230,21 +220,33 @@
         }
 
         .bungkus{
-            background-color: rgba(254,254,254,.2);
-            backdrop-filter: blur(12px);   
+            background-color: rgba(254,254,254,.1);
+            backdrop-filter: blur(8px);   
         }
         .bungkus::before{
             content: "";
             position: absolute;
             width: 100%;
             height: 100%;
-            background-color: rgba(255,255,255,.2);
+            background-color: rgba(255,255,255,.1);
             bottom: 0;
             right: 0;
             border-radius: 1rem;
             pointer-events: none;
         }
+        @media (max-width: 767.98px){
+            .potong{
+                max-width: 11rem !important;
+            }
+
+            .tmb-trx{
+                display: none;
+            }
+        }
     </style>
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="<?= base_url('css/responsive.css') ?>">
 
 </head>
 
@@ -254,6 +256,12 @@
 
     <main id="main">
         <?php if($title != 'Login' && $title != 'Dashboard'): ?>
+            <div style="background-color: transparent" class="p-3">
+                <a href="<?= base_url('/beranda') ?>">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    Kembali
+                </a>
+            </div>
             <section id="hero" class="hero" style="background:linear-gradient(rgba(215,225,235,0.8), rgba(215,225,235,0.4)), url('<?= base_url('/assets/hero/hero1.jpg') ?>'), fixed center center; background-size:cover; background-repeat: no-repeat;">
                 <div class="container">
                     <div class="d-flex align-items-center justify-content-center">
@@ -288,7 +296,8 @@
     <script src="<?= base_url('node_modules/bootstrap/dist/js/bootstrap.bundle.js') ?>"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="https://unpkg.com/@popperjs/core@2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.4/main.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.4/main.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
     <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -306,120 +315,6 @@
             tooltipTriggerEl))
     })
     </script>
-    <script>
-document.addEventListener('DOMContentLoaded', function(){
-
-
-    let denganRupiah = document.querySelector('.jml-keluar')
-    let jmlTf = document.querySelector('.jml-tf')
-    let jmlMsk = document.querySelector('.jml-msk')
-
-    const formatRupiah = (angka, prefix)=>{
-        let  number_string = angka.replace(/[^,\d]/g, '').toString(),
-        split    = number_string.split(','),
-        sisa     = split[0].length % 3,
-        rupiah     = split[0].substr(0, sisa),
-        ribuan     = split[0].substr(sisa).match(/\d{3}/gi);
-        
-        if (ribuan) {
-            separator = sisa ? '.' : '';
-            rupiah += separator + ribuan.join('.');
-        }
-        
-        rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
-        return prefix == undefined ? rupiah : (rupiah ? 'Rp. ' + rupiah : '');
-    }
-        
-    denganRupiah.addEventListener('keyup', function(e){
-        denganRupiah.value = formatRupiah(this.value)
-    })
-
-    jmlTf.addEventListener('keyup', function(e){
-        jmlTf.value = formatRupiah(this.value)
-    })
-
-        const rupiah = (number)=>{
-        return new Intl.NumberFormat("id-ID", {
-            style: "decimal", // format angka biasa atau default
-            // style: "currency", // format mata uang seperti RP, $, dll
-            // style: "percent" // format persen
-            currency: "IDR"
-            }).format(number);
-        }
-
-    console.log(rupiah(12000))
-
-    $(document).ready(function() {
-        let base_url = window.location.origin
-        // form pengeluaran
-        $('#dompet-keluar').on('change', function(e) {
-            let idDompet = $(this).val()
-            $.ajax({
-                url: '/dompet/datajson',
-                method: 'POST',
-                data: {
-                    iddompet: idDompet
-                },
-                dataType: 'JSON',
-                success: function(data) {
-                    $('#saldo').val(rupiah(data.hasil.saldo))
-                }
-            })
-        })
-
-
-        // form pemasukan
-        $('#dompet-masuk').on('change', function(e) {
-            let idDompet = $(this).val()
-            $.ajax({
-                url: base_url+'/dompet/datajson',
-                method: 'POST',
-                data: {
-                    iddompet: idDompet
-                },
-                dataType: 'JSON',
-                success: function(data) {
-                    $('#saldo-masuk').val(formatRupiah(data.hasil.saldo))
-                }
-            })
-        })
-
-        // transfer dari
-        $('#dompet-1-transfer').on('change', function(e) {
-            let idDompet1 = $(this).val()
-            $.ajax({
-                url: base_url+'/dompet/datajson',
-                method: 'POST',
-                data: {
-                    iddompet: idDompet1
-                },
-                dataType: 'JSON',
-                success: function(data) {
-                    console.log(data)
-                    $('#saldo-1-transfer').val(rupiah(data.hasil.saldo))
-                }
-            })
-        })
-
-        // transfer ke
-        $('#dompet-2-transfer').on('change', function(e) {
-            let idDompet2 = $(this).val()
-            $.ajax({
-                url: base_url+'/dompet/datajson',
-                method: 'POST',
-                data: {
-                    iddompet: idDompet2
-                },
-                dataType: 'JSON',
-                success: function(data) {
-                    console.log(data)
-                    $('#saldo-2-transfer').val(formatRupiah(data.hasil.saldo))
-                }
-            })
-        })
-    })
-})
-</script>
 </body>
 
 </html>
