@@ -124,3 +124,6 @@ nb-configuration.xml
 
 /results/
 /phpunit*.xml
+
+
+!public/node_modules/bootstrap/dist
