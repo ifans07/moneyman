@@ -24,6 +24,9 @@ class Format extends BaseConfig
      *
      * @var list<string>
      */
+
+    public int $jsonEncodeDepth = 512;
+
     public array $supportedResponseFormats = [
         'application/json',
         'application/xml', // machine-readable XML

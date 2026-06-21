@@ -531,9 +531,12 @@
     let chart1;
     let chart2;
 
+    console.log(baseUrl)
+
     function fetchChartData(startdate = null, enddate = null){
         $.ajax({
             url: baseUrl+"/filter/chart/dash",
+            // url: "<?= base_url('/filter/chart/dash') ?>",
             method: 'post',
             data: {startdate:startdate, enddate:enddate},
             dataType: 'json',

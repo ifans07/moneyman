@@ -303,7 +303,7 @@
         $('#addIncomeForm')[0].reset()
     }
 
-    const incomeFetch = (dari, sampai)=>{
+    const incomeFetch = (dari, sampai, selectedMonth = new Date().getMonth())=>{
         if(!dari && !sampai){
             let dari = $('#startDate').val()
             let sampai = $('#endDate').val()
@@ -361,7 +361,7 @@
                     return new bootstrap.Tooltip(tooltipTriggerEl);
                 });
                 $('#totalSpent').html(`Rp${formatRupiah(total)}`)
-                $('#bulanSpent').html(`${bulan[month]}`)
+                $('#bulanSpent').html(`${bulan[selectedMonth]}`)
             }else{
                 $('#listIncome').html(`
                 <ul class="list-group">
@@ -704,6 +704,9 @@ fetchComparisonData()
         $('#startDate, #endDate').on('change', ()=>{
             let dari = $('#startDate').val()
             let sampai = $('#endDate').val()
+            let ambilBulanDari = parseInt(dari.split('-')[1])
+            let ambilBulanSampai = parseInt(sampai.split('-')[1])
+            console.log(ambilBulanDari, ambilBulanSampai)
             const chartType = incomeChart?.config?.type || 'bar';
             incomeFetch(dari,sampai)
             topKategori(dari, sampai)
@@ -782,7 +785,7 @@ fetchComparisonData()
             
             alert(`Selected month: ${item.textContent} (${tanggalAwal}) s/d (${tanggalAkhirFormatted})`);
 
-            incomeFetch(tanggalAwal,tanggalAkhirFormatted)
+            incomeFetch(tanggalAwal,tanggalAkhirFormatted, selectedMonth-1)
             topKategori(tanggalAwal,tanggalAkhirFormatted)
             changeChartType(chartType);
             fetchIncomeData(chartType,tanggalAwal,tanggalAkhirFormatted)

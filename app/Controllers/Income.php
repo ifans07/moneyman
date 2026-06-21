@@ -28,7 +28,7 @@ class Income extends BaseController
             'title' => 'Income',
             'deskripsi' => "Catat semua sumber pemasukan Anda untuk memantau keuangan dan menganalisis pertumbuhan tabungan.",
             'kategori_income' => $this->kategori_income->orderBy("CASE WHEN kategori = 'Lain-lain' THEN 1 ELSE 0 END", 'ASC')->orderBy('kategori', 'ASC')->findAll(),
-            'income' => $this->income->join('kategori_income', 'kategori_income.id=income.id_kategori_income')->join('dompet', 'dompet.id=income.id_dompet', 'left')->where('date_income', date('Y-m'))->where('income.id_user',session()->get('id'))->findAll(),
+            'income' => $this->income->join('kategori_income', 'kategori_income.id=income.id_kategori_income')->join('dompet', 'dompet.id=income.id_dompet', 'left')->where('date_income >=', date('Y-m-01'))->where('date_income <=', date('Y-m-t'))->where('income.id_user',session()->get('id'))->findAll(),
             'dompet' => $this->dompet->userDompet()
         ];
         return view('income/index', $data);

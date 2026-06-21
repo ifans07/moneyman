@@ -369,13 +369,17 @@
         return `${parseInt(tanggal)} ${bulan[parseInt(bulanIndex) - 1]} ${tahun}`;
     }
 
+    function getBulan(b) {
+        $('#bulanSpent').html(`${bulan[b]}`)
+    }
+
     // expense modal
     window.openExpenseModal = ()=>{
         $('#expenseModal').modal('show');
         $('#addExpenseForm')[0].reset()
     }
 
-    const expensesFetch = (dari, sampai)=>{
+    const expensesFetch = (dari, sampai, selectedMonth = new Date().getMonth())=>{
         if(!dari && !sampai){
             let dari = $('#startDate').val()
             let sampai = $('#endDate').val()
@@ -391,7 +395,7 @@
             },
             dataType: "JSON",
             success: (data)=>{
-                const month = new Date().getMonth()
+                // const month = new Date().getMonth()
                 if(data.length > 0){
                     data.forEach((expense)=>{
                     let tanggals = expense.date_expenses.split(" ")
@@ -421,26 +425,26 @@
                                 </div>
                             </div>
                         </div>
-                    `
-                })
-                $('#listExpenses').html(html)
-                $('#jml-data').html(data.length)
-                // $('[data-bs-toggle="tooltip"]').tooltip();
-                // Initialize tooltip
-                const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-                tooltipTriggerList.map(function (tooltipTriggerEl) {
-                    return new bootstrap.Tooltip(tooltipTriggerEl);
-                });
-                $('#totalSpent').html(`Rp${formatRupiah(total)}`)
-                $('#bulanSpent').html(`${bulan[month]}`)
-            }else{
-                $('#listExpenses').html(`
-                <ul class="list-group">
-                <li class="list-group-item text-center text-muted shadow-custom">No expenses recorded on periode ${dari} - ${sampai}</li>
-                </ul>
-                `)
-                $('#totalSpent').html(`Rp${formatRupiah(total)}`)
-            }
+                        `
+                    })
+                    $('#listExpenses').html(html)
+                    $('#jml-data').html(data.length)
+                    // $('[data-bs-toggle="tooltip"]').tooltip();
+                    // Initialize tooltip
+                    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                    tooltipTriggerList.map(function (tooltipTriggerEl) {
+                        return new bootstrap.Tooltip(tooltipTriggerEl);
+                    });
+                    $('#totalSpent').html(`Rp${formatRupiah(total)}`)
+                    getBulan(selectedMonth)
+                }else{
+                    $('#listExpenses').html(`
+                    <ul class="list-group">
+                    <li class="list-group-item text-center text-muted shadow-custom">No expenses recorded on periode ${dari} - ${sampai}</li>
+                    </ul>
+                    `)
+                    $('#totalSpent').html(`Rp${formatRupiah(total)}`)
+                }
             }
         })
     }
@@ -485,6 +489,10 @@
 
     // top kategori
     const topKategori = (dari, sampai)=>{
+        if(!dari && !sampai){
+            let dari = $('#startDate').val()
+            let sampai = $('#endDate').val()
+        }
         $.ajax({
             url: "<?= base_url('api/topkategori') ?>",
             method: "post",
@@ -852,11 +860,13 @@ fetchComparisonData()
             
             alert(`Selected month: ${item.textContent} (${tanggalAwal}) s/d (${tanggalAkhirFormatted})`);
 
-            expensesFetch(tanggalAwal,tanggalAkhirFormatted)
+            expensesFetch(tanggalAwal,tanggalAkhirFormatted,selectedMonth-1)
             topKategori(tanggalAwal,tanggalAkhirFormatted)
             changeChartType(chartType);
             fetchExpenseData(chartType,tanggalAwal,tanggalAkhirFormatted)
             fetchAnalysis(tanggalAwal,tanggalAkhirFormatted)
+            getBulan(selectedMonth)
+            // $('#bulanSpent').html(`${bulan[selectedMonth]}`)
             // setTanggal("bulan", tanggalAwal, tanggalAkhirFormatted)
         });
     });

@@ -16,16 +16,16 @@ class App extends BaseConfig
      *
      * E.g., http://example.com/
      */
-    public function __construct()
-    {
-        parent::__construct();
+    // public function __construct()
+    // {
+        // parent::__construct();
 
         // Deteksi IP address server secara otomatis
         // $ipAddress = gethostbyname(gethostname()) ?? 'localhost'; // Jika gagal, fallback ke 'localhost'
-        $ipAddress = $_SERVER['HTTP_HOST'] ?? 'localhost'; // Jika gagal, fallback ke 'localhost'
+        // $ipAddress = $_SERVER['HTTP_HOST'] ?? 'localhost'; // Jika gagal, fallback ke 'localhost'
 
         // Tentukan protokol (http atau https)
-        $protocol = (!empty($_SERVER['SERVER_PROTOCOL']) && $_SERVER['SERVER_PROTOCOL'] !== 'off') ? "http" : "https";
+        // $protocol = (!empty($_SERVER['SERVER_PROTOCOL']) && $_SERVER['SERVER_PROTOCOL'] !== 'off') ? "http" : "https";
         // $protocol = $_SERVER['SERVER_PROTOCOL'];
         // $ip = gethostbyname(gethostname());
         // print_r($ipAddress);
@@ -33,9 +33,9 @@ class App extends BaseConfig
         // Tentukan baseURL secara dinamis
         // $this->baseURL = $protocol . '://' . $ipAddress . ':8008';
         // dd($_SERVER['SERVER_PROTOCOL']);
-        $this->baseURL = $protocol . '://'. $ipAddress;
+        // $this->baseURL = $protocol . '://'. $ipAddress;
         // print_r($this->baseURL);
-    }
+    // }
     public string $baseURL = 'https://moneyman.ifansz.my.id';
     // public string $baseURL = 'https://moneyman.orenji.my.id';
     // public string $baseURL = 'http://localhost:8008/';
@@ -180,7 +180,8 @@ class App extends BaseConfig
      * secure, the user will be redirected to a secure version of the page
      * and the HTTP Strict Transport Security (HSTS) header will be set.
      */
-    public bool $forceGlobalSecureRequests = false;
+    // public bool $forceGlobalSecureRequests = false;
+    public bool $forceGlobalSecureRequests = true;
 
     /**
      * --------------------------------------------------------------------------
